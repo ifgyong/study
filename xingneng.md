@@ -1,4 +1,4 @@
-[TOC]
+
 ### 1. 对象放在子线程销毁对象
  <details>
   <summary>点击查看详细内容</font></summary>
