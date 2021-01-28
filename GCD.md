@@ -62,13 +62,13 @@
 
 </details>
 
-### 2. 死锁
+### 3. 死锁
  <details>
   <summary>点击查看详细内容></summary>
 **死锁是由于多个线程(进程)在执行过程中，因为争夺资源而造成的互相等待的现象**
 </details>
 
-### 3. GCD执行原理
+### 4. GCD执行原理
  <details>
   <summary>点击查看详细内容</summary>
   `GCD`底层有一个线程池，这个池中存放的是一个个线 程，”池“中的线程可以重用，当一段时间后这个线程没 有被调用，这个线程就会被销毁，注意，开多少个线程是由线程池决定的，池是系统自动维护的，不需要程序员维护，程序员只需要向队列中添加任务，队列调度即可。
@@ -76,7 +76,7 @@
 </details>
 
 
-###  4. GCD与NSOperation 区别
+###  5. GCD与NSOperation 区别
 
  <details>
   <summary>点击查看详细内容</summary>
@@ -134,7 +134,7 @@
 </details>
 
 
-### 4. 线程生命周期
+### 6. 线程生命周期
  <details>
   <summary>点击查看详细内容</summary>
   <p> 
@@ -143,7 +143,7 @@
 </details>
 
 
-### 5. 自旋锁与互斥锁
+### 7. 自旋锁与互斥锁
  <details>
   <summary>点击查看详细内容</summary>
   <p> 
@@ -153,7 +153,7 @@
 </details>
 
 
-### 6. 读写锁 多读单写
+### 8. 读写锁 多读单写
  <details>
   <summary>点击查看详细内容</summary>
   **多读单写，读写互斥。**
@@ -273,7 +273,7 @@
 ### [查看多线程思维导图概览](./img/多线程.png)
 
 
-### 7. dispatch_source 使用
+### 9. dispatch_source 使用
  <details>
   <summary>点击查看详细内容</summary>
 
