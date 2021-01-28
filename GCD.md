@@ -271,3 +271,38 @@
 
 
 ### [查看多线程思维导图概览](./img/多线程.png)
+
+
+### 7. dispatch_source 使用
+ <details>
+  <summary>点击查看详细内容</summary>
+
+```
+	self.complate = 0;
+	self.queue=dispatch_queue_create("com.fgyong.cn", 0);
+	第一个参数：dispatch_source_type_t type为设置GCD源方法的类型，前面已经列举过了。
+     第二个参数：uintptr_t handle Apple的API介绍说，暂时没有使用，传0即可。
+     第三个参数：unsigned long mask Apple的API介绍说，使用DISPATCH_TIMER_STRICT，会引起电量消耗加剧，毕竟要求精确时间，所以一般传0即可，视业务情况而定。
+     第四个参数：dispatch_queue_t _Nullable queue 队列，将定时器事件处理的Block提交到哪个队列之上。可以传Null，默认为全局队列。注意：当提交到全局队列的时候，时间处理的回调内，需要异步获取UI线程，更新UI
+     
+	self.source=dispatch_source_create(DISPATCH_SOURCE_TYPE_DATA_ADD, 0, 0, dispatch_get_main_queue());
+	dispatch_source_set_event_handler(self.source, ^{
+		NSInteger value = dispatch_source_get_data(self.source);
+		self.complate += value;
+		NSLog(@"进度：%.2f",self.complate/100);
+	});
+	/// 启动
+	dispatch_resume(self.source);
+	
+	
+/// 触发
+dispatch_source_merge_data(self.source, 1); // source 值响应
+
+
+/// 取消
+dispatch_source_cancel(self.source);
+/// 挂起
+dispatch_suspend(self.source);
+```
+
+ </details> 
