@@ -4,7 +4,7 @@
 
 ### 1、 GCD  执行顺序 
  <details>
-  <summary>点击查看题目</font></summary>
+  <summary>点击查看题目</summary>
   
   ```
   dispatch_queue_t queue=dispatch_queue_create("fgy", DISPATCH_QUEUE_SERIAL);
@@ -240,7 +240,7 @@
 
 ### 100、 读写锁 引用对象 延迟释放问题
  <details>
-  <summary>点击查看题目</font></summary>
+  <summary>点击查看题目</summary>
 ```
 + (dispatch_queue_t )queue{
 	static dispatch_once_t onceToken;
