@@ -91,18 +91,14 @@
 -(void)testBlock5{
 	__weak typeof(self) __weakSelf = self;
 	[self.block addBlockSecond:^{
-		NSLog(@"addBlockSecond test5");
-
 		ViewController2 *strongSelf = __weakSelf;
 		NSLog(@"addBlockSecond test5 %@",strongSelf);
-		
 		
 		 strongSelf.name=@"name";
 		 NSLog(@"addBlockSecond test5 - 2%@",strongSelf);
 
 		 strongSelf.age = 10;
 		 NSLog(@"addBlockSecond test5 - 3%@",strongSelf);
-
 	}];
  }
  
@@ -110,28 +106,55 @@
 /// 如果想要执行过程不被中断， 则需要在Block内部strong一次。
 /// ViewController2 *strongSelf = __weakSelf即可。
 /// 该方式并不影响未执行block之前的对象释放，如果想要一定执行，
-/// 则需要
+//<1> 这种必须执行block才行，否则block中的strongSelf没有执行，则self会变为nil。
 -(void)test6{
 	__weak typeof(self) __weakSelf = self;
 	[self.block addBlockSecond:^{
-//		ViewController2 *strongSelf = __weakSelf;
+		ViewController2 *strongSelf = __weakSelf;
 			NSString *little = @"123";
 		NSLog(@"已经开始执行");
-		sleep(5);
+		
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+				sleep(5);
 		__weakSelf.person.name = little;
 		NSLog(@"%@ %p",__weakSelf.class,__weakSelf);
+		});
 	}];
 }
 
 
 ///==========================================
-一定会执行的写法，没有循环引用。
-__weak typeof(self) __weakSelf = self;
-	[self.block addBlockSecond:^{
-		NSString *name = @"fgyong.cn";
-		sleep(5);
-		self.person.name = name;
-	}];
+	<2> 或者直接前引用，到任务执行完毕重置为nil
+	直接vc被gcd强引用，直到被释放才打破环，可以被释放。
+==================================================
+-(void)t1{
+	self.name = @"fgyong.cn";
+	__block ViewController2 *vc= self;
+	self.block = ^{
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+				NSLog(@"hello word %@",vc.name);
+			vc=nil;
+		});
+	};
+	self.block();
+}
+-(void)dealloc{
+	NSLog(@"%s",__func__);
+}
+(2) 通过传参将数据直接传过去，不通过引用。
+
+typedef   void (^FYBlock)(id data);
+
+	self.name = @"fgyong.cn";
+	self.block = ^(id data) {
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+			NSLog(@"hello word %@",data);
+		});
+	};
+	self.block(self.name);
+	
+	
+==================================================
 	
 	///7. runloop 与线程 block总和题
 	/// 第一个打印 123 原因：队列只有一个线程的时候执行任务在主线程，主线程是默认开启runloop的，所以会打印3
