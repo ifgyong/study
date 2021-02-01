@@ -2,8 +2,8 @@
 
 
 ## 1. Block 线程 runloop综合题
- <details>
-  <summary>点击查看详细内容</summary>
+ <!--<details>
+  <summary>点击查看详细内容</summary>-->
   
   ```
  	///1. 循环引用 self->block->self
@@ -141,7 +141,8 @@
 -(void)dealloc{
 	NSLog(@"%s",__func__);
 }
-(2) 通过传参将数据直接传过去，不通过引用。
+====================================================
+<3> 通过传参将数据直接传过去，不通过引用。
 
 typedef   void (^FYBlock)(id data);
 
@@ -199,5 +200,32 @@ typedef   void (^FYBlock)(id data);
 		NSLog(@"101");
 	});
 }
+
+// 10 同步队列执行顺序
+/// 12是异步任务，3 是同步任务，
+/// 0是同步主线程任务，所以3在0前边
+/// 7 8 9 无序
+/// 最终是[1,2,3],0,[7,8,9]
+/// 只有0和3是有确定位置的，其他的两个片段都是无序的。
+	dispatch_queue_t queu=dispatch_queue_create("com.fgyong.cn", DISPATCH_QUEUE_SERIAL);
+	dispatch_async(queu, ^{
+		NSLog(@"1");
+	});
+	dispatch_async(queu, ^{
+		NSLog(@"2");
+	});
+	dispatch_sync(queu, ^{
+		NSLog(@"3 %@",[NSThread currentThread]);
+	});
+	NSLog(@"0");
+	dispatch_async(queu, ^{
+		NSLog(@"7");
+	});
+	dispatch_async(queu, ^{
+		NSLog(@"8");
+	});
+	dispatch_async(queu, ^{
+		NSLog(@"9");
+	});
   ```
  </details> 

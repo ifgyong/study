@@ -3,9 +3,51 @@
 
 ## [1. Block 直接看题](./block_ti.md)、[Block知识点图](./img/block.png)
 ## Block 分类
-|分类|情况|
-|---|---|
-|1|2|
+#### **一共6中，常用的有三种。**
+
+```
+// the raw data space for runtime classes for blocks
+// class+meta used for stack, malloc, and collectable based blocks
+
+BLOCK_EXPORT void * _NSConcreteMallocBlock[32]
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_3_2);
+BLOCK_EXPORT void * _NSConcreteAutoBlock[32]
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_3_2);
+BLOCK_EXPORT void * _NSConcreteFinalizingBlock[32]
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_3_2);
+BLOCK_EXPORT void * _NSConcreteWeakBlockVariable[32]
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_3_2);
+// declared in Block.h
+// BLOCK_EXPORT void * _NSConcreteGlobalBlock[32];
+// BLOCK_EXPORT void * _NSConcreteStackBlock[32];
+```
+
+#### 分类
+#### 1. __NSGlobalBlock__
+ 
+```
+dispatch_block_t block =^{};
+dispatch_block_t block_1 =[^{} copy];
+```
+#### 2. __NSStackBlock__
+ 
+ 在`mrc`下捕获外部变量，则是栈`block`，在`arc`情况下，系统自动执行`copy`，`block`类型变为`__NSMallocBlock__`,如果是static 或者全局变量则不需要捕获。因为全局变量在全局都可以访问到。
+```
+int a = 0;
+dispatch_block_t block2 =^{
+	NSLog(@"%d",a);
+};
+```
+#### 3. __NSMallocBlock__
+
+在`arc`编译环境下，系统自动管理`block_copy`将`stackBlock`类型变为`__NSMallocBlock__`，将`block copy`之后赋值给强引用的指针。
+
+```
+int a = 0;
+dispatch_block_t block2 =^{
+	NSLog(@"%d",a);
+};
+```
 ## 2. Block
 
 ```
