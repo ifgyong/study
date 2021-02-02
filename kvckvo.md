@@ -2,6 +2,7 @@
 ### 1.KVC&KVO 知识图
 <details>
   <summary>点击查看详细内容</summary>
+  
 ![查看知识图](./img/kvo.png)
 </details>
 
@@ -31,6 +32,8 @@
 - 1. `setName:`
 - 2. `_setName:`
 - 3. `setIsName:`
+
+
 ![](media/16121704612214.jpg)
 
 
@@ -41,6 +44,7 @@
 - 4. `_isName:`
 
 `成员变量的查找顺序`
+
 ![](media/16121706654167.jpg)
 
 ## 3. KVO
