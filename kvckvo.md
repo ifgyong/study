@@ -64,10 +64,28 @@
 需要，如果被观察的是单例，容易发送崩溃，野指针。
 
 ### 3. 通过automaticallyNotifiesObserversForKey：来改变是否自动观察
-`YES: `自动观察
-`NO：` 需要手动`willChangeForKey：`来触发。
+`YES: `自动观察,系统新建子类`NSKVONotifying_XXX`来重写需要观察的属性`setter`方法和`getClass`。
+`NO：` 需要手动`willChangeForKey：`来触发。系统不会自动新建子类。
+
+当然也可以根据`key`的值来判断是否需要新建子类。
+
 ```
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key{
 	return  NO;
 }
 ```
+
+### 4. 无侵入埋点 利用KVO新建立的子类，给子类添加方法，调用`viewDidLoad`的时候，是直接调用子类的`ViewDidLoad`方法，从而避免子类继承父类调用`super ViewdidLoad`的话，重复计算的问题。
+
+```mermaid 
+graph TD
+
+子类NSKVONotifying_XXX-->|A->isa指向子类|父类A
+
+继承子类B-->|super viewDidLoad|父类A
+
+
+```
+
+![](media/16122535976980.jpg)
+
