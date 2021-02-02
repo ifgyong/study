@@ -3,7 +3,9 @@
 <details>
   <summary>点击查看详细内容</summary>
   
-![查看知识图](./img/kvo.png)
+  
+![查看知识图](./img/KVO.png)
+
 </details>
 
 ## 2.KVC
