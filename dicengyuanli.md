@@ -3,7 +3,8 @@
 
 <details>
   <summary>点击查看详细内容</summary>
-**指针在32位是4字节，在64位是8字节**,[具体思路看blog](https://juejin.cn/post/6844903877960024077)
+**指针在32位是4字节，在64位是8字节**
+[具体思路看blog](https://juejin.cn/post/6844903877960024077)
 
 ```
 int main(int argc, const char * argv[]) {
@@ -48,9 +49,12 @@ int main(int argc, const char * argv[]) {
 [文章查看详细](https://juejin.cn/post/6844903878656262151)
 <details>
   <summary>点击查看详细内容</summary>
-![](media/16122528453841.jpg)
+  
+![](./media/16122528453841.jpg)
 
-![](media/16122530346072.jpg)
+
+![](./media/16122530346072.jpg)
+
 
 #### 1.对象的isa指向哪里？
 
@@ -99,6 +103,7 @@ int main(int argc, const char * argv[]) {
 
 <details>
   <summary>点击查看详细内容</summary>
-![](media/16122550523975.jpg)
+  
+![](./media/16122550523975.jpg)
 
 </details>
