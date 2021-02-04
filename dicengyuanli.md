@@ -107,8 +107,14 @@ int main(int argc, const char * argv[]) {
 
 </details>
 
-### 2.实例对象和类对象
+### <a href="#1">2.实例对象和类对象</a>
+
+
 [文章查看详细](https://juejin.cn/post/6844903878656262151)
+
+#### 2.1`NSObject`的父类和元类指针是怎么联系的？
+
+
 <details>
   <summary>点击查看详细内容</summary>
   
@@ -118,14 +124,14 @@ int main(int argc, const char * argv[]) {
 ![](./media/16122530346072.jpg)
 
 
-#### 1.对象的isa指向哪里？
+#### 2.2.对象的isa指向哪里？
 
 - 1. `instance`对象的`isa`指向`class`对象
 - 2.`class`对象的`isa`指向`meta-class`对象
 - 3.`meta-class`对象的`isa`指向基类的`meta-class`对象
 - 4.`class`和`meta-class`的内存结构一样的，只是值不一样
 
-#### 2.OC的类信息存放在哪里？
+#### 2.3.OC的类信息存放在哪里？
 
 - 1.对象方法、属性、成员变量、协议信息存放在`class`对象中
 - 2.类方法存放在`meta-class`对象中
@@ -135,13 +141,13 @@ int main(int argc, const char * argv[]) {
 
 
 ### 3. `+load`和`initialize`有什么区别?
-#### 1.`initialize`
+#### 3.1.`initialize`
 - 1.`+initialize`方法会在类第一次接收到消息时调用
 - 2.先调用父类的`+initialize`，再调用子类的`+initialize`
 - 3.先初始化父类，再初始化子类，每个类只会初始化**1**次
 - 1. 通过`objc_msgSend`调用，如果子类 没有实现会调用父类的该方法，有可能父类方法调用了多次，分类的该方法会覆盖类本身方法。
 
-#### 2.`+load`
+#### 3.2.`+load`
 - 1. 在man函数之前，根据`imp`直接调用而`initialize`man函数之后通过`initialize`调用的。
 - 2. `+load`是runtime加载类，分类调用，并且只调用一次。
 - 3. `+initialize`方法会在类第一次接收到消息时调用，如果子类没有实现会调用父类的该方法，(有可能父类方法调用了多次，分类的该方法会覆盖类本身方法)
@@ -153,22 +159,9 @@ int main(int argc, const char * argv[]) {
 - 2. 关联对象是存储在全局统一的`AssociationsManager`管理的`AssociationsHashMap`中.
 - 3. 传入`value =nil`，会移除该关联对线 `AssociationsManager`其实是管理了已`key`为`id` `object`对应的`AssociationsHashMap`
 
-### 5. 消息转发
-[消息转发](https://juejin.cn/post/6844903892765900807)
 
-#### 1. 方法查找以及拦截流程
-- 1.`objc_msgSend`发送消息，会首先在`cache`中查找，查找不到则去方法列表(顺序是`cache->class_rw_t->supclass cache ->superclass class_rw_t ->动态解析`)
-- 2.第二步是动态解析，能在`resolveInstanceMethod`或`+ (BOOL)resolveClassMethod:(SEL)sel`来来拦截，可以给`class`新增实现函数，达到不崩溃目的
-- 3.第三步是消息转发，转发第一步可以在`+ (id)forwardingTargetForSelector:(SEL)aSelector`或`- (id)forwardingTargetForSelector:(SEL)aSelector`拦截类或实例方法，能将对象方法转发给其他对象，也能将对象方法转发给类方法，也可以将类方法转发给实例方法
-- 4.第三步消息转发的第二步可以在`+ (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector`或`- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector`实现拦截类和实例方法并返回函数签名
-- 5.第三步消息转发的第三步可以`+ (void)forwardInvocation:(NSInvocation *)anInvocation`或`- (void)forwardInvocation:(NSInvocation *)anInvocation`实现类方法和实例方法的调用和获取返回值
 
-<details>
-  <summary>点击查看详细内容</summary>
-  
-![](./media/16122550523975.jpg)
 
-</details>
 
 
 
@@ -183,7 +176,7 @@ int main(int argc, const char * argv[]) {
 </details>
 
 
-### 6. alloc 流程
+### 5. alloc 流程
 <details>
 <summary>点击查看</summary>
 
@@ -192,16 +185,16 @@ int main(int argc, const char * argv[]) {
 
 </details>
 
-### 7. inline 内联函数有什么用
+### 6. inline 内联函数有什么用
 
 
-#### 7.1 inline说明
+#### 6.1 inline说明
 1、内联函数只是我们发给编译器的一个请求，不一定会被采用
 2、内联函数内部不能写大量代码，编译器会自动放弃内联函数
 3、内联函数内部不允许开关语句和循环语句
 4、内联函数的定义必须在调用之前
 
-#### 7.2 优点
+#### 6.2 优点
 1、inline相对于函数
 
 解决函数调用效率问题。在汇编时没有调用call,取消了函数参数压栈，减少了调用开销
@@ -211,3 +204,106 @@ int main(int argc, const char * argv[]) {
 在编译时对参数类型进行检查
 可以使用受保护类型的属性
 
+
+### 7 方法
+#### 7.1 方法本质 `self` 与`supper` 区别
+
+<details>
+
+```
+
+LGStudent *s = [LGStudent new];
+[s sayCode];
+// 方法调用底层编译
+// 方法的本质: 消息 : 消息接受者 消息编号 ....参数 (消息体)
+objc_msgSend(s, sel_registerName("sayCode"));
+    
+// 类方法编译底层
+//        id cls = [LGStudent class];
+//        void *pointA = &cls;
+//        [(__bridge id)pointA sayNB];
+objc_msgSend(objc_getClass("LGStudent"), sel_registerName("sayNB"));
+
+// 向父类发消息(对象方法)
+struct objc_super lgSuper;
+lgSuper.receiver = s;
+lgSuper.super_class = [LGPerson class];
+objc_msgSendSuper(&lgSuper, @selector(sayHello));
+
+//向父类发消息(类方法)
+struct objc_super myClassSuper;
+myClassSuper.receiver = [s class];
+myClassSuper.super_class = class_getSuperclass(object_getClass([s class]));// 元类
+objc_msgSendSuper(&myClassSuper, sel_registerName("sayNB"));
+```
+
+</details>
+
+
+
+
+
+### 8 `isKindOf` 和`isMemberOf`
+
+
+ 这两个都是比较`isa`指针是否相等，不过`kindof`可以比较父类。
+ 
+[具体资料查看指针图](#1)
+ 
+- `+[isMemberOfClass:] self.isa ==cls`
+- `-[isMemberOfClass:] self.isa ==cls`
+- `+[isKindOfClass:] self.isa or self.isa.superclass == cls`
+- `-[isKindOfClass:] self.isa or self.isa.superclass == cls`
+
+
+<details>
+
+
+
+```
+// 类方法
+// 1 0 0 0
+BOOL re1 = [(id)[NSObject class] isKindOfClass:[NSObject class]];       // 1
+BOOL re2 = [(id)[NSObject class] isMemberOfClass:[NSObject class]];     // 0
+BOOL re3 = [(id)[FYPerson class] isKindOfClass:[FYPerson class]];       // 0
+BOOL re4 = [(id)[FYPerson class] isMemberOfClass:[FYPerson class]];     // 0
+NSLog(@" re1 :%hhd\n re2 :%hhd\n re3 :%hhd\n re4 :%hhd\n",re1,re2,re3,re4);
+
+// 实例方法
+// 1 1 1 0
+// 对象是否是 class的类或子类
+BOOL re5 = [(id)[NSObject alloc] isKindOfClass:[NSObject class]];       // 1
+// self.class==class
+BOOL re6 = [(id)[NSObject alloc] isMemberOfClass:[NSObject class]];     // 1
+BOOL re7 = [(id)[FYPerson alloc] isKindOfClass:[NSObject class]];       // 1
+BOOL re8 = [(id)[FYPerson alloc] isMemberOfClass:[NSObject class]];     // 0
+NSLog(@" re5 :%hhd\n re6 :%hhd\n re7 :%hhd\n re8 :%hhd\n",re5,re6,re7,re8);
+		
+	/*
+//类对象指向元类，比较元类和当前类是否相同
++ (BOOL)isMemberOfClass:(Class)cls {
+   return self->ISA() == cls;
+}
+// 比较当前类是否和clas 相等
+- (BOOL)isMemberOfClass:(Class)cls {
+   return [self class] == cls;
+}
+// 当前类是否是cls或者cls的子类
++ (BOOL)isKindOfClass:(Class)cls {
+   for (Class tcls = self->ISA(); tcls; tcls = tcls->getSuperclass()) {
+	   if (tcls == cls) return YES;
+   }
+   return NO;
+}
+// 比较[self class] || [self superclass] == cls
+- (BOOL)isKindOfClass:(Class)cls {
+   for (Class tcls = [self class]; tcls; tcls = tcls->getSuperclass()) {
+	   if (tcls == cls) return YES;
+   }
+   return NO;
+}
+	 
+	 */
+```
+
+</details>
