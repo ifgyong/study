@@ -289,12 +289,24 @@ NSLog(@" re5 :%hhd\n re6 :%hhd\n re7 :%hhd\n re8 :%hhd\n",re5,re6,re7,re8);
    return [self class] == cls;
 }
 // 当前类是否是cls或者cls的子类
-+ (BOOL)isKindOfClass:(Class)cls {
-   for (Class tcls = self->ISA(); tcls; tcls = tcls->getSuperclass()) {
-	   if (tcls == cls) return YES;
-   }
-   return NO;
+// Calls [obj isKindOfClass] 新版 818
+BOOL
+objc_opt_isKindOfClass(id obj, Class otherClass)
+{
+#if __OBJC2__
+    if (slowpath(!obj)) return NO;
+    Class cls = obj->getIsa();
+    if (fastpath(!cls->hasCustomCore())) {
+        for (Class tcls = cls; tcls; tcls = tcls->getSuperclass()) {
+			printf("tcls:%s ",(char *)tcls);
+            if (tcls == otherClass) return YES;
+        }
+        return NO;
+    }
+#endif
+    return ((BOOL(*)(id, SEL, Class))objc_msgSend)(obj, @selector(isKindOfClass:), otherClass);
 }
+
 // 比较[self class] || [self superclass] == cls
 - (BOOL)isKindOfClass:(Class)cls {
    for (Class tcls = [self class]; tcls; tcls = tcls->getSuperclass()) {
