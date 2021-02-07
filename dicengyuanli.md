@@ -99,8 +99,8 @@ int main(int argc, const char * argv[]) {
 	 
  ```
  
-> **	 age 在数据区,const_name 在全局区，p和obj在堆上，p.address也是在堆上。**
->	**p.name 在全局区，因为是固定的字符串。p.age,p.level只存储值，不存储指针，在栈上。**
+> **	 age 在栈区,const_name 在去全局静态区，p和obj在堆上，p.address也是在堆上。**
+>	**p.name 在全局区，因为是固定的字符串。p.age,p.level只存储值，不存储指针，在堆上和p一样。**
  
  ![](media/16123231428938.jpg)
 
