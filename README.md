@@ -2,26 +2,24 @@
 
 ## iOS
 ### [1、Runloop](./runloop.md)/[Runtime](./runtime.md)/[KVC&KVO](./kvckvo.md)/[底层原理](./dicengyuanli.md)
-### [2、GCD、读写锁](./GCD.md)
+### [2、GCD与读写锁](./GCD.md)
 ### [3、锁与多线程](./lock.md)、[线程通讯](./xiancheng.md)、
 
 ### [4、Block](./block.md)
-### [5、性能优化](./xingneng.md)
+### [5、二进制重排插桩](erjinzhichazhuang.md)/[启动优化](./qidongyouhua.md)/[性能优化](./xingneng.md)
 
-### [6、二进制重排插桩](erjinzhichazhuang.md)
-### [7、启动优化](./qidongyouhua.md)
+### [6、设计模式](./shejimoshi.md)
 
-### [8、设计模式](./shejimoshi.md)
 
-### [9、排序算法]()
+### [7、UI相关的]()
 
-### [10、UI相关的]()
+### [8、消息传递]()
 
-### [11、消息传递]()
+### [9、渲染机制]()
 
-### [12、渲染机制]()
+### [**10、LLVM编译阶段](./llvm.md)
+### [11、排序算法]()
 
-### [**13、渲染机制](./llvm.md)
 ## flutter
 ### [1、局部刷新]()
 
