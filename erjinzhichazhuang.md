@@ -1,6 +1,7 @@
 # 二进制重排(静态插幢)
 
 #### [查看抖音原文](https://mp.weixin.qq.com/s?__biz=MzI1MzYzMjE0MQ==&mid=2247485101&idx=1&sn=abbbb6da1aba37a04047fc210363bcc9&chksm=e9d0cd4fdea7445989cf26623a16fc8ce2876bf3bda95a5532bb0e5e5b1420765653df0b94d1&mpshare=1&scene=1&srcid=0316fLf0VRLHLhRPFDH6LuQo&sharer_sharetime=1595570815854&sharer_shareid=ff29c649ff1b5cea91081f325b5ada59#rd)
+#### [抖音品质建设-原理-2021.1.25](https://mp.weixin.qq.com/s/3-Sbqe9gxdV6eI1f435BDg)/[抖音实战启动优化](https://mp.weixin.qq.com/s/ekXfFu4-rmZpHwzFuKiLXw)
 ### [简书二进制重拍步骤](https://www.jianshu.com/p/3f9ed86a45cb)
 #### [clang 12 Documentation](https://clang.llvm.org/docs/SanitizerCoverage.html)
 ### [虚拟内存和物理内存、Page fault](https://www.jianshu.com/p/cbc9f597207e)
@@ -122,3 +123,11 @@ void __sanitizer_cov_trace_pc_guard(uint32_t *guard) {
 在`Instruments->system Trace`中测试启动`page falut`,次数和耗时。
 
 ![-w1394](media/16128379477100.jpg)
+
+
+## 总结
+
+> 二进制重排，在启动的路径触发的`page in`次数的数量，会影响启动时间，如果`page in` 次数不上万，则此操作可以忽略，如果达到了**10万**次级别，则可以尝试。
+> 
+> 我们APP 次数平均在2000多次，平均每次`page in` **0.2ms**，一共**0.4s**，完全在测试不出来。
+> 
