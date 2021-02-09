@@ -8,7 +8,7 @@
 ### [4、Block](./block.md)
 ### [5、性能优化](./xingneng.md)
 
-### [6、二进制重排]()
+### [6、二进制重排插桩](erjinzhichazhuang.md)
 ### [7、启动优化](./qidongyouhua.md)
 
 ### [8、设计模式](./shejimoshi.md)

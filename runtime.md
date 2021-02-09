@@ -68,5 +68,42 @@ NSLog(@"%@ %@",cls,tcls);
 </details>
 
 
+### 5 .内存平移
+
+```
+NSString *tem = @"KC";
+//	int a = 100;
+id pcls = [LGPerson class];
+void * pp= &pcls;
+[(__bridge id)pp saySomething];
+    
+
+
+@interface LGPerson : NSObject
+@property (nonatomic, copy)NSString *name;
+- (void)saySomething;
+@end
+@implementation LGPerson
+- (void)saySomething{
+	NSLog(@"NB %s - %@",__func__,self.name);
+}
+@end
+```
+
+<details>
+
+
+相当于还是`objc_msgSend(LGPerson.class,@selector(saySomething),_cmd)`;
+本质和`[[LGPerson alloc]saySomething]` 一样。
+`	 pp `指向`pcls`，实例对象的`isa`指针也是指向`pcls`，所以效果一样。
+	
+打印的 `person.name` 值为`KC`，也就是`tem`的值。
+寻找属性的地址就是按照`class`的布局，根据`isa`的指针向前切换8字节，因为`pp`指向的指针是`pcls`，在栈上，所以平移8字节，就是找到了`tem`，所以输出的值是`tem`的值。
+因为`class`的布局是按照堆上的规则布局的，地址越来越大。
+所以刚才的平移8自己是`plcs`+**8**字节的地址，就是指针向上平移8字节，最终找到了`tem`指针。
+	![](media/16127510810628.jpg)
+
+</details>
+
 
 
