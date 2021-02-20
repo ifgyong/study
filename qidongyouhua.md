@@ -34,3 +34,24 @@ https://github.com/lennet/FlameGraph
 
 #### 2. 命令
 `swift run FlameGraph ./a.pdf`
+
+#### 3 优化结果
+
+|耗时|优化阶段|
+|---|---|
+|2.65s|优化前|
+|1.322s|优化后|
+
+采用的是 `Instruments App Launch`统计的耗时，均测试了**10**次，平均数即为表格数据。
+
+根据`Instruments App Launch`，可以查看每个函数耗时，根据函数耗时来做优化。
+`Instruments App Launch`其实已经统计到了 主页的`viewDidAppear:`，这个数字和APP绘画出来第一帧，会有所偏大。
+
+#### 4. 二进制重排
+二进制插桩重排，经过测试，冷启动`page fault` 次数平均在`1000-3000`次，耗时平均是`100`us，左右，也就是优化过最多可以节省`1500*0.1us=150ms`,也就是在`0.1s`左右。完全在冷启动正常波动范围，效果不是很明显。
+
+[二进制重排步骤](./erjinzhichazhuang.md)
+
+
+
+
