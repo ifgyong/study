@@ -6,7 +6,7 @@
 ### [3、锁与多线程](./lock.md)、[线程通讯](./xiancheng.md)、
 
 ### [4、Block](./block.md)
-### [5、二进制重排插桩](erjinzhichazhuang.md)/[启动优化](./qidongyouhua.md)/[性能优化](./xingneng.md)
+### [5、二进制重排插桩](erjinzhichazhuang.md)/[启动优化](./qidongyouhua.md)/[性能优化](./xingneng.md)/[静态库与动态库](./jingtaiku.md)
 
 ### [6、设计模式](./shejimoshi.md)
 
