@@ -1,4 +1,4 @@
-# LLVM
+# LLVM 编译流程
 ## clang 
 使用一个简单例子
 ### 1. 预处理阶段
@@ -129,7 +129,7 @@ clang	-Os	-S	-fobjc-arc	-emit-llvm main.m -o main.ll
 ```
 
 ## bitCode
-Xcode7 以后开启bitCode 苹果作进一步优化，生成.bc中间代码，我们通过优化后的IR代码生成.bc代码。
+`Xcode7` 以后开启`bitCode` 苹果作进一步优化，生成`.bc`中间代码，我们通过优化后的`IR`代码生成`.bc`代码。
 
 ```
 clang	-emit-llvm	-c	main.ll -o main.bc
@@ -143,7 +143,6 @@ clang	-emit-llvm	-c	main.ll -o main.bc
 ```
 clang	-S	-fobjc-arc	main.bc	-o main.s
 clang	-S	-fobjc-arc	main.ll	-o main.s
-
 ```
 
 生成了汇编代码也可以进行优化
@@ -160,7 +159,7 @@ clang	-Os	-S	-fobjc-arc	main.m -o main.s
 clang	-fmodules	-c	main.s	-o main.o
 ```
 
-通过nm命令，查看main.o中的符号。
+通过`nm`命令，查看`main.o`中的符号。
 
 ```
 $xcrun	nm	-nm	main.o

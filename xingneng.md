@@ -11,5 +11,7 @@ dispatch_async(queue, ^{
 	[p2 class];
 });
 ```
-
 </details>
+
+### 2. 子线程绘画位图然后显示
+

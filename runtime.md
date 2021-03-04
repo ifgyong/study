@@ -12,7 +12,7 @@
 方法的本质：发送消息，发送消息有几个流程
 
 - 1. 快速查找(`objc_msgSend`),`cache_t`缓存消息
-- 2. 慢查找，递归自己|父类_`loopUpImpOrForward`
+- 2. 慢查找，递归自己(缓存->class_rw 存储方法)|父类_(缓存->class_rw 存储方法)`loopUpImpOrForward`
 - 3. 查找不到消息：动态消息解析——`resolveInstanceMethod`
 - 4. 消息快速转发——`forwardingTargetForSelector`
 - 5. 消息慢速转发——`methodSignatureForSelector` & `forwardInvocation`
@@ -24,7 +24,7 @@
 ### 2. self 和super区别
 <details>
 
-```
+```objc
 	
 /// 原理 (id self,sel,_cmd)
 /// 所以结果是 FYPerson FYPerson
@@ -50,12 +50,11 @@ NSLog(@"%@ %@",cls,tcls);
 
 > 原因是：我们编译好的实例变量存储的位置`ro`，一旦编译完成，内存结构就完全确定就无法修改。
 
-> 可以通过添加关联变量来实现这个功能。属性+方法。
+> 可以通过添加**关联变量**来实现这个功能。属性+方法。
 </details>
 
 ### 4. __weak 原理
 <details>
-
 `__weak`修饰的变量,会将该变量添加到全局的`hash`表中，在`VC` `delloc `函数中自动销毁。
 #### 4.1 系统如何实现weak的为什么可以自动置nil。
 
@@ -70,7 +69,7 @@ NSLog(@"%@ %@",cls,tcls);
 
 ### 5 .内存平移
 
-```
+```objc
 NSString *tem = @"KC";
 //	int a = 100;
 id pcls = [LGPerson class];
@@ -104,6 +103,46 @@ void * pp= &pcls;
 	![](media/16127510810628.jpg)
 
 </details>
+
+### 6. 获取所有方法和类
+
+#### 6.1 使用`runtimeAPI` `objc_getClassList`
+#### 6.2 使用`mach-o`读取`section`内容 
+### 7. 如果知道一个函数地址被篡改了?
+
+当`imp`和`saddr`地址一致则没被该。
+
+```objc
+#include <dlfcn.h>
+#include <objc/objc.h>
+#include <objc/runtime.h>
+#include <stdio.h>
+#include <string.h>
+
+int main()
+{
+	Dl_info info;
+	IMP imp = class_getMethodImplementation(objc_getClass("NSArray"),sel_registerName("description"));
+	printf("pointer %p\n", imp);
+	if (dladdr(imp,&info))
+	{
+		printf("dli_fname: %s\n", info.dli_fname);
+		printf("dli_sname: %s\n", info.dli_sname);
+		printf("dli_fbase: %p\n", info.dli_fbase);
+		printf("dli_saddr: %p\n", info.dli_saddr);
+	} else
+	{
+		printf("error: can't find that symbol.\n");
+	}
+	NSArray *array =[NSArray new];
+	printf("%@",array.description);
+}
+```
+
+### 8.  加载`ASLR`
+每次启动苹果会随机一个地址，算法叫做`ASLR`(全称为 `Address Space Layout Randomization`，地址空间布局随机化),然后`dyld`加载动态库加载的`class`，会重新`rebase`所有加载的类和函数，这样子，后续调用才能找到该函数，系统函数是`rebind`，系统函数在共享区域，直接绑定即可，这个动作叫做`rebind`。
+
+
 
 
 
