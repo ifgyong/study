@@ -26,14 +26,23 @@
 
 
 ### 关键点
-- 1. 多处使用`dispatch_semaphore_t`保证线程安全。`IOQueue`采用同步队列。
+- 1. 多处使用`dispatch_semaphore_t`保证线程安全。`IOQueue`采用**同步队列**。
 - 2. 使用`operationQueue`添加`operation`来依次控制并发和下载顺序，使用`[lastoperation depend:newoperation]`来控制`FIFO`和`LIFO`策略。
 - 3. 多处`block`使用`// strongly self，保证生命周期SDWebImageDownloader *sself = wself;if (!sself) return;`来保证生命周期，在执行过程中不被中断，如果`self=nil`则直接`return`。
-- 4. 开发者配置了`disk`和过期时间，在进入`background`和关闭`APP`的时候进行删除(存储和读取最好和`LRU`结合，提高效率)。
+- 4. 开发者配置了`disk`和过期时间，在进入`background`和关闭`APP`的时候进行删除(存储和读取最好和`LRU`结合，提高**删除效率**)。
 - 5. 使用关联对象来加速读取速度，存取的`url`/`Tranform`/`progress`/`opertionKey`等都是存储在当前对象的。
 - 6. `self.weakCache = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:0];`使用`MapTable`保存弱引用，提高缓存命中率。
 - 7. 按照`memory->disk->downFromUrl`的顺序读取`img`。
 - 8. 在图片命中之后，展示的时候根据`obj`的关联对象->`class Tranform`来展示动画或者直接展示。
+
+#### 性能角度
+- 1. 设计读取缓存三级缓存提高命中率。
+- 2. `CGContextDrawImage`解码成大小合适的，根据当前设备重绘除可用的位图。
+- 3. 圆角使用贝塞尔曲线。
+
+
+#### 设计角度
+- 1. `SDImageCache`、`SDMemoryCache`、`SDMemoryCache`通过`config`来配置协议。设计成协议，可热插拔，单独实现缓存的，然后让SD走自己的缓存插件。
 
 
 
