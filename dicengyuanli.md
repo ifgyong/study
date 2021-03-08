@@ -244,23 +244,23 @@ objc_msgSendSuper(&myClassSuper, sel_registerName("sayNB"));
 
 
 ### 8 `isKindOf` 和`isMemberOf`
+- `+[isMemberOfClass:]` 比较`self->ISA()==cls`
+- `+[isKindOfClass:]` 比较`self->ISA()==cls or self->superclass==cls` 
+- `-[isMemberOfClass:]` 比较`self->ISA()==cls`
+- `-[isKindOfClass:]` 比较`self->ISA()==cls or self->superclass==cls` 
+
+**`isMemberOfClass`是比较当前的，`isKindOfClass`比较当前和父类是否相等**
 
 
- 这两个都是比较`isa`指针是否相等，不过`kindof`可以比较父类。
- 
+
+
 [具体资料查看指针图](#1)
- 
-- `+[isMemberOfClass:] self.isa ==cls`
-- `-[isMemberOfClass:] self.isa ==cls`
-- `+[isKindOfClass:] self.isa or self.isa.superclass == cls`
-- `-[isKindOfClass:] self.isa or self.isa.superclass == cls`
-
 
 <details>
 
 
 
-```
+```objc
 // 类方法
 // 1 0 0 0
 BOOL re1 = [(id)[NSObject class] isKindOfClass:[NSObject class]];       // 1
@@ -276,43 +276,33 @@ BOOL re5 = [(id)[NSObject alloc] isKindOfClass:[NSObject class]];       // 1
 // self.class==class
 BOOL re6 = [(id)[NSObject alloc] isMemberOfClass:[NSObject class]];     // 1
 BOOL re7 = [(id)[FYPerson alloc] isKindOfClass:[NSObject class]];       // 1
+/// [FYPeson alloc] 是FYPerson对象，NSObject.class != [FYPerson class],所以不相等。
 BOOL re8 = [(id)[FYPerson alloc] isMemberOfClass:[NSObject class]];     // 0
 NSLog(@" re5 :%hhd\n re6 :%hhd\n re7 :%hhd\n re8 :%hhd\n",re5,re6,re7,re8);
 		
 	/*
-//类对象指向元类，比较元类和当前类是否相同
-+ (BOOL)isMemberOfClass:(Class)cls {
-   return self->ISA() == cls;
-}
-// 比较当前类是否和clas 相等
-- (BOOL)isMemberOfClass:(Class)cls {
-   return [self class] == cls;
-}
-// 当前类是否是cls或者cls的子类
-// Calls [obj isKindOfClass] 新版 818
-BOOL
-objc_opt_isKindOfClass(id obj, Class otherClass)
-{
-#if __OBJC2__
-    if (slowpath(!obj)) return NO;
-    Class cls = obj->getIsa();
-    if (fastpath(!cls->hasCustomCore())) {
-        for (Class tcls = cls; tcls; tcls = tcls->getSuperclass()) {
-			printf("tcls:%s ",(char *)tcls);
-            if (tcls == otherClass) return YES;
-        }
-        return NO;
-    }
-#endif
-    return ((BOOL(*)(id, SEL, Class))objc_msgSend)(obj, @selector(isKindOfClass:), otherClass);
-}
 
-// 比较[self class] || [self superclass] == cls
+/// 比较当前self->isa()==cls
++ (BOOL)isMemberOfClass:(Class)cls {
+    return self->ISA() == cls;
+}
+/// 比较self.class == cls
+- (BOOL)isMemberOfClass:(Class)cls {
+    return [self class] == cls;
+}
+/// 比较self->ISA()和 superClass()==cls
++ (BOOL)isKindOfClass:(Class)cls {
+    for (Class tcls = self->ISA(); tcls; tcls = tcls->getSuperclass()) {
+        if (tcls == cls) return YES;
+    }
+    return NO;
+}
+/// 比较self->cls和superClass()==cls
 - (BOOL)isKindOfClass:(Class)cls {
-   for (Class tcls = [self class]; tcls; tcls = tcls->getSuperclass()) {
-	   if (tcls == cls) return YES;
-   }
-   return NO;
+    for (Class tcls = [self class]; tcls; tcls = tcls->getSuperclass()) {
+        if (tcls == cls) return YES;
+    }
+    return NO;
 }
 	 
 	 */
