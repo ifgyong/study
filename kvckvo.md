@@ -4,7 +4,7 @@
   <summary>点击查看详细内容</summary>
   
   
-![查看知识图](./img/KVO.png)
+* ![查看知识图](./img/KVO.png)
 
 </details>
 

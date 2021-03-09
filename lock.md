@@ -74,38 +74,38 @@ G-->|YES|H(执行任务B)-->doend
 ```
 
 
-```
+```objc
 
 // 条件数量
-    NSConditionLock *conditionLock = [[NSConditionLock alloc] initWithCondition:2];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-		
-		/// 需要条件==1，才可进入到该任务，否则在等待
-		///[conditionLock lockWhenCondition:1 beforeDate:[NSDate date]];
-		/// 相当于内部调用了了 条件锁的lock和wait。
-		///[NSCondition lock];
-		///[XXX wait];
-       [conditionLock lockWhenCondition:1];
-       NSLog(@"线程 1");
-       [conditionLock unlockWithCondition:0];
-    });
+NSConditionLock *conditionLock = [[NSConditionLock alloc] initWithCondition:2];
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+	
+	/// 需要条件==1，才可进入到该任务，否则在等待
+	///[conditionLock lockWhenCondition:1 beforeDate:[NSDate date]];
+	/// 相当于内部调用了了 条件锁的lock和wait。
+	///[NSCondition lock];
+	///[XXX wait];
+   [conditionLock lockWhenCondition:1];
+   NSLog(@"线程 1");
+   [conditionLock unlockWithCondition:0];
+});
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-       
-		/// 需要条件==2，才可进入到该任务，否则在等待
-       [conditionLock lockWhenCondition:2];
-       
-       NSLog(@"线程 2");
-       
-       [conditionLock unlockWithCondition:1];
-    });
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-       
-		/// 无需条件 即可进入到该任务
-       [conditionLock lock];
-       NSLog(@"线程 3");
-       [conditionLock unlock];
-    });
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+   
+	/// 需要条件==2，才可进入到该任务，否则在等待
+   [conditionLock lockWhenCondition:2];
+   
+   NSLog(@"线程 2");
+   
+   [conditionLock unlockWithCondition:1];
+});
+dispatch_async(dispatch_get_global_queue(0, 0), ^{
+   
+	/// 无需条件 即可进入到该任务
+   [conditionLock lock];
+   NSLog(@"线程 3");
+   [conditionLock unlock];
+});
 ```
 
 **解决问题：弹窗较多处理，根据弹窗优先级来弹窗，每个弹窗有自己的条件，当第一个已经弹过了直接跳到下一个条件即可。**
@@ -132,7 +132,7 @@ G-->|YES|H(执行任务B)-->doend
   - 在写入的时候，进行读操作，则会被阻塞，直到写入完成。
   - 在读的时候，进行写入操作，则会被阻塞，直到读操作完成，才会写入。
 
-```
+```objc
 // DISPATCH_QUEUE_CONCURRENT 为并发，栅栏函数配合并发队列才有意义，加入配合同步队列，就不用栅栏函数了，因为本来就是先进先出的执行顺序。
 // 1. 并发队列(非全局队列)+栅栏函数
 // DISPATCH_QUEUE_CONCURRENT 并发队列
