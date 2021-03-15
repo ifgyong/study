@@ -39,19 +39,30 @@
 [https单项认证与双向认证](https://blog.csdn.net/foshengtang/article/details/109111119?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.control&dist_request_id=&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.control)
 
  `HTTPS`为了兼顾安全与效率，同时使用了对称加密和非对称加密，在传输的过程中会涉及到三个密钥:服务端的公钥和私钥，用来进行非对称加密客户端生成的随机密钥，用来进行对称加密
+ 
+#### HTTPS 1.2
+ 
 1. 客户端访问`HTTPS`连接。
-客户端会会把安全协议版本号、客户端支持的加密 算法列表，随机数`C`发给服务端。
+客户端会会把安全协议版本号、客户端支持的加密算法列表，随机数`C`发给服务端。
 2. 服务端发送证书给客户端
-服务端接收密钥算法配件后，会和自己支持的加密 算法列表进行比对，如果不符合，则断开连接，否则服务 端会在该算法列表中，选择一种对称算法、一种公钥算法 (具有特定密钥⻓度的`RSA`)和一种`MAC`算法发给客户端。在发送算法的同时还会把数字证书和随机数`S`发送给客 户端,还有`Server Params`
+服务端接收密钥算法配件后，会和自己支持的加密算法列表进行比对，如果不符合，则断开连接，否则服务端会在该算法列表中，选择一种对称算法、一种公钥算法(具有特定密钥⻓度的`RSA`)和一种`MAC`算法发给客户端。在发送算法的同时还会把数字证书和随机数`S`发送给客户端,还有按照密钥套件要求，生成**椭圆曲线的公钥(Server Params)**发送给客户端。
 3. 客户端验证`server`证书
-会对`server`公钥进行检查，验证其合法性，如果发 现公钥有问题，那么`HTTPS`传输就无法继续。
+会对`server`公钥进行检查，验证其合法性，如果发现公钥有问题，那么`HTTPS`传输就无法继续。
 4. 客户端组装会话密钥
-如果公钥合格，那么客户端会用服务器公钥来生成 一个前主密钥`(Pre-Master)`,并通过该前主密钥和随机数`C`、`S`来 组装会话密钥
-1. 客户端将前主秘钥加密发送给服务端。
- 是通过服务端的公钥来对前主密钥进行对称加密，发送给服务端。
-3. 服务端通过私钥解密得到主密钥
-4. 服务端组装会话密钥
-5. 数据传输
+如果公钥合格，按照密码套件要求也生成一个**椭圆曲线的公钥(Client Params)**,用`Client Key Exchange`发送给服务器，那么客户端`ECDHE`算法用`Client Params`和`Server Params`算出`Pre-Master`,最后用`C` `S` `Pre-Master`来算出主密钥。叫做`Master-Secret`。
+1. 服务端也有了材料进行组装，`Master-Secret`=PRF(`C`+`S`+`Pre-Master`)。
+2. 数据传输
+
+#### HTTPS 1.3
+
+1.2 握手消息会花费2-RTT，1.3中，只需要一个1-RTT，1.3中删除了`Key Exchagne`消息，效率提高了一倍。
+
+1. 客户端完成`TCP`握手后，`Clicent hello`，带有的参数有随机数`C`,密码套件，密钥交换算法参数`key_share`
+2. 服务端接受了`C`,`Client Params`,然后服务端生成随机数`S`和`Server Params`,首先利用`Client Params`和`Server Params`算出`Pre-master`,然后用随机数`C S Pre-master`计算得出主密钥，服务端发送`Change Cipher Spec`给客户端，表示后续数据是加密数据。后续的扩展信息都用主密钥加密发送。这些数据都在一个包里，所以省掉了`1-RTT`。提高了效率。
+3. 客户端首先受到随机数`S`和`Server Params`,`Client Params`和`Server Params`算出`Pre-master`，然后利用`C S pre-master`计算得出主密钥，后续的接受到的数据用主密钥解密即可。
+4. 客户端发送`Change Cipher Spec`给服务端，表示后续数据是加密数据。
+
+
 
 ## 4. TCP与UDP
 

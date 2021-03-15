@@ -31,23 +31,19 @@
 ```
 ## 函数调用优先级顺序
 ### 原理 setXXX
-- 1. `setName:`
-- 2. `_setName:`
-- 3. `setIsName:`
+- 1. 方法`setName:`
+- 当`+[accessInstanceVariablesDirectly]`默认是`YES`，如果开发重写返回`NO`，则调用`- (void)setValue:(id)value forUndefinedKey:(NSString *)key`,否则继续**2**
+- 2. 成员变量：`_name:`
+- 3. 成员变量：`_isName:`
 
-
-![](media/16121704612214.jpg)
 
 
 ### 原理 getXXX
-- 1. `getName:`
-- 2. `_name:`
-- 3. `isName:`
-- 4. `_isName:`
+- 1. `-[getName:]`
+- 2. `-[name:]`
+- 3. `-[isName:]`
+- 4. 如果没找到则访问`+ (BOOL)accessInstanceVariablesDirectly`,默认是`YES`,则会按照`_<key>`,`_is<Key>`,`<key>`,`is<Key>` 的顺序搜索成员变量名，这里不推荐这么做，因为这样直接访问实例变量破坏了封装性，使代码更脆弱。如果重写了类方法 `+ (BOOL)accessInstanceVariablesDirectly` 返回 `NO` 的话，那么会直接调用 `valueForUndefinedKey:` 方法，默认是抛出异常
 
-`成员变量的查找顺序`
-
-![](media/16121706654167.jpg)
 
 ## 3. KVO
 [apple 文档](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/KeyValueObserving/KeyValueObserving.html#//apple_ref/doc/uid/10000177i)
@@ -55,7 +51,7 @@
 ### 1.`[obj addObserver:forKeyPath:options:context:]`中的`context`有什么用？
 <details>
   <summary>点击查看详细内容</summary>
-利用`context`来区分不同的对象相同的`keypath`的值,平时穿NULL，多个对象被观察，使用指针来区分即可。
+利用`context`来区分不同的对象相同的`keypath`的值,平时传`NULL`，多个对象被观察，使用指针来区分即可。
 
 ```
 	static NSString *KPersonKey=@"KPersonKey";
