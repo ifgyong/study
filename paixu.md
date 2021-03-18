@@ -42,10 +42,11 @@ extension Array where Element : Comparable{
     }
 }
 ```
+
 ### 3. 桶排序
 
-时间复杂度O(N)
-空间复杂度O(N)
+时间复杂度`O(N)`
+空间复杂度`O(N)`
 
 ```objc
 -(NSArray *)sort:(NSMutableArray*) array{
@@ -114,19 +115,20 @@ extension Array where Element : Comparable{
 /// python 首先从右侧找到比[key]小的值放在[l]位置
 /// 然后从左侧找到比[key]大的值放在[right]位置
 /// 做完一轮循环 将[key]的值归位 [left]
+
 def quickSort(l:int,r:int,array:list[int]):
     if l >= r :return
     left = l
     right = r
-    base = array[l]
+    key = array[l]
     while left < right:
-        while left < right and array[right] >= base:
+        while left < right and array[right] >= key:
             right -= 1
         array[l] = array[right]
-        while left < right and array[left] <= base :
+        while left < right and array[left] <= key :
             left += 1
         array[right] = array[left]
-    array[left] = base
+    array[left] = key
     quickSort(l,left-1,array)
     quickSort(left+1,r,array)
     

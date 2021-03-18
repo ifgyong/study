@@ -71,6 +71,49 @@
   
 **死锁是由于多个线程(进程)在执行过程中，因为争夺资源而造成的互相等待的现象**
 
+
+同步队列在输出2的时候进行了同步执行，则会死锁。
+如果换成并发队列则可以。
+
+```objc
+	dispatch_queue_t queue=  dispatch_queue_create("com.fgyong.cn", DISPATCH_QUEUE_SERIAL);
+	dispatch_async(queue, ^{
+		NSLog(@"1");
+		dispatch_sync(queue, ^{
+			NSLog(@"2");
+		});
+		NSLog(@"3");
+	});
+	NSLog(@"4");
+```
+更正后的代码：同步执行改为异步执行
+
+```objc
+dispatch_queue_t queue=  dispatch_queue_create("com.fgyong.cn", DISPATCH_QUEUE_SERIAL);
+	dispatch_async(queue, ^{
+		NSLog(@"1");
+		dispatch_async(queue, ^{
+			NSLog(@"2");
+		});
+		NSLog(@"3");
+	});
+	NSLog(@"4");
+```
+
+或者改为异步队列：
+
+```objc
+	dispatch_queue_t queue=  dispatch_queue_create("com.fgyong.cn", DISPATCH_QUEUE_CONCURRENT);
+	dispatch_async(queue, ^{
+		NSLog(@"1");
+		dispatch_sync(queue, ^{
+			NSLog(@"2");
+		});
+		NSLog(@"3");
+	});
+	NSLog(@"4");
+```
+
 </details>
 
 ### 4. GCD执行原理
@@ -192,3 +235,16 @@ dispatch_suspend(self.source);
 ```
 
  </details> 
+ 
+ 
+### 9. 队列有几种
+
+ <details>
+  <summary>点击查看详细内容</summary>
+1. 全局队列`dispatch_get_global_queue(0, DISPATCH_QUEUE_PRIORITY_DEFAULT)`
+2. 主队列（特殊的同步队列）`dispatch_get_main_queue()`，主队列的对应的主线程`runloop`在`main`函数之前已经由系统启动。
+3. 自定义同步队列`dispatch_queue_create("com.fgyong.cn", DISPATCH_QUEUE_SERIAL)`
+4. 自定义并发队列`dispatch_queue_create("com.fgyong.cn", DISPATCH_QUEUE_CONCURRENT)`
+
+
+</details>

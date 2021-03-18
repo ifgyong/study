@@ -19,7 +19,7 @@
 
 ### [**10、LLVM编译阶段](./llvm.md)
 ### [11、排序算法](./paixu.md)
-### [12、其他面试题](media/mianshiti.pdf)/[其他1面试题](https://draveness.me/guan-yu-xie-ios-wen-ti-de-jie-da/)/[]()
+### [12、其他面试题](media/mianshiti.pdf)/[其他1面试题](https://draveness.me/guan-yu-xie-ios-wen-ti-de-jie-da/)/[基础](jichu.md)
 ### 13、三方经典库：[SDWebImage](./sdwebimage.md)/[Masonry](./masonry.md)
 
 <!--## flutter

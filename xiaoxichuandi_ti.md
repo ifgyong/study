@@ -2,7 +2,7 @@
 
 ### 1. 题目1
 
-```
+```objc
 @interface FYPerson : NSObject
 -(void)hello;
 @end

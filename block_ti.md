@@ -5,11 +5,11 @@
  <!--<details>
   <summary>点击查看详细内容</summary>-->
   
-  ```
- 	///1. 循环引用 self->block->self
-	[self.block addBlock:^{
-		self.view.backgroundColor=[UIColor redColor];
-	}];
+  ```objc
+///1. 循环引用 self->block->self
+[self.block addBlock:^{
+	self.view.backgroundColor=[UIColor redColor];
+}];
 	
 	///Block Class method
 	// self->block->self  导致了 循环引用
@@ -87,7 +87,9 @@
 		}
 }
 
-/// 5. 紧紧当执行到strong的时候监测 weakself是否已经释放，加入没有释放则进行引用，那么久block中执行过程中则不会释放掉，block执行完成，则释放掉
+/// 5. 紧紧当执行到strong的时候监测 weakself是否已经释放，
+/// 假如没有释放则进行引用，那么久block中执行过程中则不会释放掉
+/// block执行完成，则释放掉
 -(void)testBlock5{
 	__weak typeof(self) __weakSelf = self;
 	[self.block addBlockSecond:^{
@@ -159,14 +161,15 @@ typedef   void (^FYBlock)(id data);
 	
 	///7. runloop 与线程 block总和题
 	/// 第一个打印 123 原因：队列只有一个线程的时候执行任务在主线程，主线程是默认开启runloop的，所以会打印3
-	/// 第二个打印 1 自己创建的线程执行完任务block则生命周期结束，需要保活添加port才能打印3.
-	-(void)test7{
-	dispatch_queue_t queue=dispatch_queue_create("com.fgyong.cm", DISPATCH_QUEUE_CONCURRENT);
-	dispatch_async(queue, ^{
-		NSLog(@"1");
-		[self performSelector:@selector(pLog) withObject:nil afterDelay:2.0];
-		NSLog(@"2");
-	});
+	/// 第二个打印 1 自己创建的线程执行完任务block则生命周期结束
+	/// 需要保活添加port才能打印3
+-(void)test7{
+dispatch_queue_t queue=dispatch_queue_create("com.fgyong.cm", DISPATCH_QUEUE_CONCURRENT);
+dispatch_async(queue, ^{
+	NSLog(@"1");
+	[self performSelector:@selector(pLog) withObject:nil afterDelay:2.0];
+	NSLog(@"2");
+});
 }
 -(void)pLog{
 	NSLog(@"3 %d",[NSThread isMainThread]);
@@ -177,7 +180,7 @@ typedef   void (^FYBlock)(id data);
 	}];
 	[th start];
 	//self.th = th;
-	[self performSelector:@selector(pLog) withObject:nil afterDelay:2.0];
+	// [self performSelector:@selector(pLog) withObject:nil afterDelay:2.0];
 }
 
 
@@ -204,7 +207,7 @@ typedef   void (^FYBlock)(id data);
 // 10 同步队列执行顺序
 /// 12是异步任务，3 是同步任务，
 /// 0是同步主线程任务，所以3在0前边
-/// 7 8 9 无序
+/// 7 8 9 无序 1 2 3无序，但是3在0前边。
 /// 最终是[1,2,3],0,[7,8,9]
 /// 只有0和3是有确定位置的，其他的两个片段都是无序的。
 	dispatch_queue_t queu=dispatch_queue_create("com.fgyong.cn", DISPATCH_QUEUE_SERIAL);
@@ -227,5 +230,24 @@ typedef   void (^FYBlock)(id data);
 	dispatch_async(queu, ^{
 		NSLog(@"9");
 	});
+	
+	
+	/// 11. 最终a输出多少
+	/// 当任务基本一致则基本遵循FIFO原则
+	/// 只需要在队尾添加打印任务即可，就是真实的a的值
+	__block int a = 0;
+	while (a<10) {
+		dispatch_async(dispatch_get_global_queue(0, 0), ^{
+			a +=1;
+			NSLog(@"%d",a);
+
+		});
+	}
+	NSLog(@"ret==%d",a);
+//	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+//		NSLog(@"ret==%d",a);
+//	});
+
+
   ```
  </details> 
