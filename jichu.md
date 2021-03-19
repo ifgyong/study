@@ -390,6 +390,50 @@ dispatch_resume(timer);
 
 
 
+### 53. Runloop的作用
+- 保持应用的持续运行
+- 处理App的各种事件
+- 节省CPU资源，提升性能。
+- 负责渲染界面的UI
+
+### 54. RunLoop和AutoreleasePool的关系
+`RunLoop`进行处理事件的时候会自动创建一个`AutoreleasePool`，在处理事件过程中会将发送`autorelease`消息的对象添加到`AutoreleasePool`中。等待`RunLoop`处理事件结束，就释放当前的`AutoreleasePool`。`AutoreleasePool`则会将所有的对象进行`release`-1操作。
+
+### 55. 怎么创建一个常驻线程
+
+```objc
+@autoreleasepool {
+    NSRunLoop *runloop = [NSRunLoop currentRunLoop];
+    [runloop addPort:[NSMachPort port] forMode:NSDefaultRunLoopMode];
+    [runloop run];
+}
+```
+
+### 56. 怎样保证子线程数据回来更新UI的时候不打断用户的滑动操作
+
+因为滑动操作当前的`RunLoop`运行在`Tracking Mode`上面，为了不打断用户的操作，我们可以在`Default Mode`上面进行刷新数据，也就是等待滑动结束之后，当前的`RunLoop`从`Tracking Mode`切换到`Default Mode`再去更新数据.
+
+```
+[self performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO modes:@[NSDefaultRunLoopMode]];
+
+```
+
+### 57. GCD 在 Runloop 中的使用
+`GCD`只有在回到主线程的时候才会获取当前的`RunLoop`，会触发`RunLoop`的`Source1`事件。
+
+
+### 58 .OpenGL 主要渲染步骤
+
+1. 查看答案
+2. 设置图元数据
+3. 着色器-shader 计算图元数据（位置·颜色·其他）
+4. 光栅化-rasterization 渲染为像素
+5. fragment shader，决定最终成像
+6. 其他操作（显示·隐藏·融合）
+
+### 59. 为什么UIKit和AppleKit都要基于Core Animation框架
+
+因为对于`UIView`和`NSView`来说，他们只负责更改属性和负责交互。负责渲染呈现`UI`的是`CALayer`，但是渲染对于`iOS`和`macOS`没有什么不同。为了让代码复用，框架简单。但是又要区分`iOS`和`macOS`端的交互，就将`UIKit`和`AppleKit`底层都依赖于`Core Animation`来绘制界面。
 
 
 
