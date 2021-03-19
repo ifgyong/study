@@ -12,7 +12,18 @@
 `retain：setter`方法对参数进行`release`旧值，再`retain`新值。
 
 `copy：setter`方法进行`Copy`操作，与`retain`一样
- 
+
+#### 1.1  @public、@private、@protected、@package
+
+- `@public` 在任何地方都能直接访问对象的成员变量
+- `@package:`在同一个包下就可以直接访问，比如说在同一个框架
+- `@protected` 可以在当前类及其子类对象方法中直接访问(系统默认下是用它来修饰的)
+- `@private` 只能在当前类的对象方法中直接访问,如果子类要访问需要调用父类的`get/set`方法
+![-w577](media/16161210627897.jpg)
+
+
+
+
  
 ### 2. `#include`与`#import`的区别、`#import`与`@class` 的区别
 
