@@ -102,7 +102,7 @@ void __sanitizer_cov_trace_pc_guard(uint32_t *guard) {
     //将数组变成字符串
     NSString * funcStr = [funcs  componentsJoinedByString:@"\n"];
     
-    NSString * filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"hank.order"];
+    NSString * filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"setup.order"];
     NSData * fileContents = [funcStr dataUsingEncoding:NSUTF8StringEncoding];
     [[NSFileManager defaultManager] createFileAtPath:filePath contents:fileContents attributes:nil];
     NSLog(@"%@",funcStr);
@@ -115,7 +115,7 @@ void __sanitizer_cov_trace_pc_guard(uint32_t *guard) {
 让编译函数的顺序按照该文件的先后顺序进行编译，`Build Settings->Order File`。否则按照`Build Phases->Compile Sources`的先后顺序进行编译。
 
 ```
-./FY.order
+./setup.order
 ```
 
 #### 5. 查看效果

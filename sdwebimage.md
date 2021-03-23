@@ -34,6 +34,16 @@
 - 6. `self.weakCache = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:0];`使用`MapTable`保存弱引用，提高缓存命中率。
 - 7. 按照`memory->disk->downFromUrl`的顺序读取`img`。
 - 8. 在图片命中之后，展示的时候根据`obj`的关联对象->`class Tranform`来展示动画或者直接展示。
+- 9 . 如何保证一定在主线程更新？
+[查看详细实现](./SDWebImageManager.md)
+
+- 10 . 利用上下文保存各种信息`typedef NSDictionary<SDWebImageContextOption, id> SDWebImageContext`
+- 11 . 相同`UIImageView`同时下载多个不同`url`,则后者下载，前者则取消下载。
+- 12 . 通过`[SDWebImageManager setDefaultImageCache:(id<SDImageCache>)defaultImageCache]`和`[SDWebImageManager setDefaultImageLoader:(id<SDImageLoader>)defaultImageLoader]`来保证扩展能力，可以自己实现`id<SDImageLoader> `或者`id<SDImageCache>`来使用自己的插件，[查看详细实现](./SDWebImageManager.md)。
+- 13 . 通过宏来定义使用的锁，iOS10以前使用**自旋锁**`OSSpinLockLock`,之后使用**互斥锁**`os_unfair_lock_lock`[查看详细实现](./SDWebImageManager.md)
+- 14 . 在`ImageCahche`配置读写操作都加入到同步队列中`ioQueue`,
+
+
 
 #### 性能角度
 - 1. 设计读取缓存三级缓存提高命中率。
