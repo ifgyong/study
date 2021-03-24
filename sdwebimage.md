@@ -48,11 +48,24 @@
 #### 性能角度
 - 1. 设计读取缓存三级缓存提高命中率。
 - 2. `CGContextDrawImage`解码成大小合适的，根据当前设备重绘除可用的位图。
-- 3. 圆角使用贝塞尔曲线。
+- 3. 圆角使用贝塞尔曲线避免离屏渲染。
+- 4. 内存缓存使用自旋锁，disk缓存使用同步队列。
+
+
+`YYCache` 对比:为什么内存缓存用自旋锁，磁盘缓存使用`dispatch_semaphore`呢？
+
+- `OSSpinLock` 自旋锁，性能最高的锁。原理很简单，就是一直` do while `忙等。它的缺点是当等待时会消耗大量` CPU` 资源，所以它不适用于较长时间的任务。对于内存缓存的存取来说，它非常合适。
+
+- `dispatch_semaphore` 是信号量，但当信号总量设为` 1` 时也可以当作锁来。在没有等待情况出现时，它的性能比 `pthread_mutex`还要高，但一旦有等待情况出现时，性能就会下降许多。相对于 `OSSpinLock` 来说，它的优势在于等待时不会消耗` CPU` 资源。对磁盘缓存来说，它比较合适。
+- 设置超时时间，从`lru->tail`删除即可。
+- 设置阈值从尾部删除。
+- 释放`obj`在子线程。
+- 使用`while(!finish){}`10ms访问一次`        if (pthread_mutex_trylock(&_lock) == 0) {}`
+
 
 
 #### 设计角度
-- 1. `SDImageCache`、`SDMemoryCache`、`SDMemoryCache`通过`config`来配置协议。设计成协议，可热插拔，单独实现缓存的，然后让SD走自己的缓存插件。
+- 1. `SDImageCache`、`SDMemoryCache`、`SDMemoryCache`通过`config`来配置协议。设计成协议，可热插拔，单独实现缓存的，然后让`SD`走自己的缓存插件。
 
 
 
@@ -87,10 +100,14 @@ if (wself.executionOrder == SDWebImageDownloaderLIFOExecutionOrder) {
 保存头部`head=Node();`,新增的node，`head->next=Node()`,然后将`url`作为`key`保存到`HashTable`中，当进入到后台的时候从头部遍历访问，如果该`node`超时，则进行删除，如果已遍历的文件大小累计超过设置的阈值，则后续的`node`从`HashMap`删除.
 
 ```objc
-class Node : NSObject{
-    id img;
-    Time accessTime;
-    Node *pre;
-    Node *next;
+@interface _YYLinkedMapNode : NSObject {
+    @package
+    __unsafe_unretained _YYLinkedMapNode *_prev; // retained by dic
+    __unsafe_unretained _YYLinkedMapNode *_next; // retained by dic
+    id _key;
+    id _value;
+    NSUInteger _cost;
+    NSTimeInterval _time;
 }
+@end
 ```
