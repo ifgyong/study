@@ -41,7 +41,7 @@
 - 11 . 相同`UIImageView`同时下载多个不同`url`,则后者下载，前者则取消下载。
 - 12 . 通过`[SDWebImageManager setDefaultImageCache:(id<SDImageCache>)defaultImageCache]`和`[SDWebImageManager setDefaultImageLoader:(id<SDImageLoader>)defaultImageLoader]`来保证扩展能力，可以自己实现`id<SDImageLoader> `或者`id<SDImageCache>`来使用自己的插件，[查看详细实现](./SDWebImageManager.md)。
 - 13 . 通过宏来定义使用的锁，iOS10以前使用**自旋锁**`OSSpinLockLock`,之后使用**互斥锁**`os_unfair_lock_lock`[查看详细实现](./SDWebImageManager.md)
-- 14 . 在`ImageCahche`配置读写操作都加入到同步队列中`ioQueue`,
+- 14 . 在`ImageCahche`配置磁盘读写操作都加入到同步队列中`ioQueue`,`memoryCache`使用的自旋锁，效率更高。
 
 
 
@@ -49,18 +49,26 @@
 - 1. 设计读取缓存三级缓存提高命中率。
 - 2. `CGContextDrawImage`解码成大小合适的，根据当前设备重绘除可用的位图。
 - 3. 圆角使用贝塞尔曲线避免离屏渲染。
-- 4. 内存缓存使用自旋锁，disk缓存使用同步队列。
+- 4. 内存缓存使用自旋锁，`diskCache`使用同步队列。
 
 
-`YYCache` 对比:为什么内存缓存用自旋锁，磁盘缓存使用`dispatch_semaphore`呢？
+### `YYCache` 对比:为什么内存缓存用自旋锁，磁盘缓存使用`dispatch_semaphore`呢？
 
 - `OSSpinLock` 自旋锁，性能最高的锁。原理很简单，就是一直` do while `忙等。它的缺点是当等待时会消耗大量` CPU` 资源，所以它不适用于较长时间的任务。对于内存缓存的存取来说，它非常合适。
 
 - `dispatch_semaphore` 是信号量，但当信号总量设为` 1` 时也可以当作锁来。在没有等待情况出现时，它的性能比 `pthread_mutex`还要高，但一旦有等待情况出现时，性能就会下降许多。相对于 `OSSpinLock` 来说，它的优势在于等待时不会消耗` CPU` 资源。对磁盘缓存来说，它比较合适。
 - 设置超时时间，从`lru->tail`删除即可。
-- 设置阈值从尾部删除。
-- 释放`obj`在子线程。
+- 设置`count`阈值或者`cost`阈值直接从尾部删除。过期时间在进入后台删除。
+- 释放`obj`对象在子线程。
 - 使用`while(!finish){}`10ms访问一次`        if (pthread_mutex_trylock(&_lock) == 0) {}`
+- 通过设置`shouldRemoveAllObjectsWhenEnteringBackground`来控制是否在进入后台删除所有缓存。或者`shouldRemoveAllObjectsOnMemoryWarning`在内存警告的时候删除所有对象。
+- `YYCache`双向链表实现的`LRU`比系统的多了一个访问时间，在访问的时候，把该节点换到头部，删除的时候从尾部删除(尾部访问时间更久)，也更符合`LRU`思想。
+- 
+#### YYCache 多线程 职责单一
+
+- `memoryCahce`在进入后台删除过期资源在一个自定义的**同步队列**，优先级为`low`，能耗更低。
+- 销毁对象在全局队列，优先级为`low`，性能更好。
+
 
 
 

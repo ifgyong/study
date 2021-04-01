@@ -60,7 +60,7 @@
 }
 ```
 
-### 2. 锁
+### 2. 自旋锁
 
 ```objc
 #if SD_USE_OS_UNFAIR_LOCK
