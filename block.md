@@ -153,3 +153,31 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
+
+`GCD`中`dispatch_after/dispatch_queue`会强引用`self`,影响生命周期,一般不会内存泄露，因为只是`GCD`引用了`self`，`self`并无引用`GCD`。
+
+```objc
+	// 3秒后任务结束 再释放 self
+queue=dispatch_queue_create("com.fgyong.cn", DISPATCH_QUEUE_SERIAL);
+dispatch_async(queue, ^{
+	sleep(3);
+	dispatch_async(dispatch_get_main_queue(), ^{
+		self.view.backgroundColor=[UIColor grayColor];
+	});
+});
+```
+
+`UIView`没有强引用`v`，不影响生命周期,没有强引用。属于非逃逸`block`，在执行的所有者任务之前结束了`block`的引用，例如 `Masory`
+
+```objc
+
+// 非逃逸 block 执行任务的对象结束之前已经执行了block，则是非逃逸
+// 逃逸 block 是在对象执行block完毕，自己生命周期结束，则是逃逸。
+// 而且 是stackBlock 类型不会对auto变量前引用
+
+[UIView animateWithDuration:3
+					 animations:^{
+    self.view.backgroundColor=[UIColor grayColor];
+}];
+```
+

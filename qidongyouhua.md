@@ -3,6 +3,10 @@
 ## 1. 启动顺序
 <details>
   <summary>点击查看详细内容</summary>
+  
+  
+  ![-w474](media/16173485177228.jpg)
+
   - 1. `framework initializers`
   - 2. image `+load`
   - 3. `c/c++ __attribute__`

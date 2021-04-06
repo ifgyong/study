@@ -1,6 +1,9 @@
 # LLVM 编译流程
 ## clang 
 使用一个简单例子
+[孙源 链接过程ppt](media/l425ecedfea1d37ee35fa61139acee4fb-s5191092430901693850-m78068fb7eb4332e40d5d0023a3fc7aff.pdf)
+
+
 ### 1. 预处理阶段
 将文件`main.m`预处理输出到`main2.m`.
 
