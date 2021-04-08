@@ -25,6 +25,7 @@
 #### 1.2 `NSHashTable` 和`NSMapTable`区别?
 - `NSHashTable`是可变的`set`，可以对加入的对象设置引用类型，可设置`弱引用`，不影响源对象生命周期
 - `NSMapTable`是可变的`Dic`，可以对加入的对象设置引用类型,可设置`弱引用`，不影响源对象生命周期
+- 当弱引用的对象重置为nil，则自动从`NSHashTable` 和`NSMapTable`删除。
 
 
  

@@ -42,6 +42,7 @@
 - 12 . 通过`[SDWebImageManager setDefaultImageCache:(id<SDImageCache>)defaultImageCache]`和`[SDWebImageManager setDefaultImageLoader:(id<SDImageLoader>)defaultImageLoader]`来保证扩展能力，可以自己实现`id<SDImageLoader> `或者`id<SDImageCache>`来使用自己的插件，[查看详细实现](./SDWebImageManager.md)。
 - 13 . 通过宏来定义使用的锁，iOS10以前使用**自旋锁**`OSSpinLockLock`,之后使用**互斥锁**`os_unfair_lock_lock`[查看详细实现](./SDWebImageManager.md)
 - 14 . 在`ImageCahche`配置磁盘读写操作都加入到同步队列中`ioQueue`,`memoryCache`使用的自旋锁，效率更高。
+- 15 . 同一个`SDWebImage`下载2个不同`url`，上一个`opertion`会被`cancel`，然后`callbacks`会被删除掉，没办法再回调了。
 
 
 
