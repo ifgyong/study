@@ -56,3 +56,47 @@
 	[anInvocation invoke];
 }
 ```
+
+
+### 4. `NSTimer`前引用`self`，使用`NSProxy`解决相互强引用
+
+```objc
+@implementation Proxy
+- (instancetype)initWithTarget:(id)target {
+	_target = target;
+	return self;
+}
+
+//类方法
++ (instancetype)proxyWithTarget:(id)target {
+	return [[self alloc] initWithTarget:target];
+}
+
+#pragma mark - over write
+
+//重写NSProxy如下两个方法，在处理消息转发时，将消息转发给真正的Target处理
+- (void)forwardInvocation:(NSInvocation *)invocation {
+	[invocation invokeWithTarget:self.target];
+}
+
+//
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector {
+	return [_target methodSignatureForSelector:selector];
+}
+- (void)dealloc
+{
+	NSLog(@"%s",__func__);
+}
+
+
+// 使用例子:
+-(void)setTimer{
+	Proxy *xy= [Proxy proxyWithTarget:self];
+
+	timer=[NSTimer scheduledTimerWithTimeInterval:0.2
+										   target:xy
+										 selector:@selector(p)
+										 userInfo:nil
+										  repeats:YES];
+}
+```
