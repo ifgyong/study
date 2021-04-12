@@ -4,6 +4,7 @@
 ### 1. 内存优化 
 1. 图片下采样
 2. 离屏渲染
+3. kvo 页面统计加载时间
 
 ### 2. 启动优化
 1. 二进制插桩
@@ -28,13 +29,13 @@ while (!dismiss) {
 4. 做了一个动态库来记录`method_exchange`的历史记录,需要将该动态库调整到第一个才行。
 
 ### 5. 读写锁 与缓存
-1. `momeryCache`利用自旋锁，性能更好
-2. `diskCache`利用互斥锁就能满足需求
+1. `momeryCache`利用自旋锁/`os_unfair_lock`，性能更好
+2. `diskCache`利用`mutex_lock`互斥锁就能满足需求
 3. 读写常用文件需要家读写锁来防止资源竞争
 4. 读写锁是**多读单写，读写互斥**。
 5. [FYML 记录方法交换历史](https://github.com/ifgyong/FYMSL)
 6. [fishhook原理](https://www.jianshu.com/p/d4dd4eb27b50)/[冬瓜fishhook原理](https://www.desgard.com/iOS-Source-Probe/C/fishhook/%E5%B7%A7%E7%94%A8%E7%AC%A6%E5%8F%B7%E8%A1%A8%20-%20%E6%8E%A2%E6%B1%82%20fishhook%20%E5%8E%9F%E7%90%86%EF%BC%88%E4%B8%80%EF%BC%89.html)
-7. `os_un_fair_lock`自旋锁，`NSLock`是互斥锁
+7. `os_un_fair_lock`互斥锁，`NSLock`是互斥锁
 
 
 ![-w466](media/16173486146063.jpg)
@@ -67,4 +68,3 @@ while (!dismiss) {
 
 ### 6. flutter [做了一个动画库 包含了30多个动画](https://github.com/ifgyong/flutter_easyHub),还有[QQ气泡动画](https://github.com/ifgyong/flutter_qq_bubble)
 ### 7. py做的自动化数据校验功能，生成各种尺寸Icon脚本
-### 8. 
