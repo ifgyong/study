@@ -10,7 +10,6 @@
   - 1. `framework initializers`
   - 2. image `+load`
   - 3. `c/c++ __attribute__`
-  - 4. 所有 `initalizers`
 
 > `+load` 函数父类先于子类，类先于类别。
 >   可以将`+load`函数的实现在`initalizers`+`dispatch_once`来保证只执行一次。减少`pre-main`启动时间
