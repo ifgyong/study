@@ -24,6 +24,14 @@
 ### 13、三方经典库：[SDWebImage](./sdwebimage.md)/[YYCache](./yycache.md)/[Masonry](./masonry.md)
 ### 14、[核心动画电子书](https://www.kancloud.cn/manual/ios/97759)/[优势](./youshi.md)
 
+
+## 其他面试题
+### [1. github《招聘一个靠谱的 iOS》](https://github.com/ifgyong/iOSInterviewQuestions)
+
+### [2. ios - interview 面试题](https://github.com/ifgyong/iOS-Interview)
+
+### [3. 逻辑 2020 面试题](https://github.com/ifgyong/LGiOSQuestions) [逻辑Cooci github](https://github.com/LGCooci)
+
 <!--## flutter
 ### [1、局部刷新]()
 
