@@ -241,6 +241,7 @@ dispatch_suspend(self.source);
 
  <details>
   <summary>点击查看详细内容</summary>
+	
 1. 全局队列`dispatch_get_global_queue(0, DISPATCH_QUEUE_PRIORITY_DEFAULT)`
 2. 主队列（特殊的同步队列）`dispatch_get_main_queue()`，主队列的对应的主线程`runloop`在`main`函数之前已经由系统启动。
 3. 自定义同步队列`dispatch_queue_create("com.fgyong.cn", DISPATCH_QUEUE_SERIAL)`
