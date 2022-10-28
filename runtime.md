@@ -56,6 +56,7 @@ NSLog(@"%@ %@",cls,tcls);
 ### 4. __weak 原理
 <details>
 `__weak`修饰的变量,会将该变量添加到全局的`hash`表中，在`VC` `delloc `函数中自动销毁。
+	
 #### 4.1 系统如何实现weak的为什么可以自动置nil。
 
 - 1. 通过`SideTable`找到我们的`weak_table`
