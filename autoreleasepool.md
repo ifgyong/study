@@ -52,7 +52,7 @@
 
 可以看到，手动添加到指定的`@autoreleasepool`中的`autorelease`对象，在`@autoreleasepool`大括号结束时就会释放了，不受`RunLoop`控制.
 
-这个 `viewdidLoad` 执行完就 销毁，原因是 一个循环，清理掉 引用计数为0的对象
+释放在`viewdidLoad` 之前，就是 结构体出栈销毁。
 
 
 
