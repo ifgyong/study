@@ -5,12 +5,13 @@
 1. 图片下采样
 2. 离屏渲染
 3. kvo 页面统计加载时间
+4. LRU算法
 
 ### 2. 启动优化
 1. 二进制插桩
 2. 业务接口合并，重复接口改成内存数据服务，用到的地方还需要读即可。
 3. load函数迁移
-4. 资源的加载的延迟
+4. 废弃class清理
 
 ### 3. 崩溃处理
 1. 让`APP`不立即次崩溃，可以手机崩溃堆栈发送到服务器
@@ -69,5 +70,30 @@ while (!dismiss) {
 ![](media/16176929282297.jpg)
 
 
-### 6. flutter [做了一个动画库 包含了30多个动画](https://github.com/ifgyong/flutter_easyHub),还有[QQ气泡动画](https://github.com/ifgyong/flutter_qq_bubble)
-### 7. py做的自动化数据校验功能，生成各种尺寸Icon脚本
+### 6. flutter
+[携程酒店flutter性能优化](https://www.toutiao.com/article/7147521191882981920/?app=news_article&timestamp=1667270519&use_new_style=1&req_id=202211011041580102100430420523BFC4&group_id=7147521191882981920&share_token=3987DD47-5236-4A52-8A35-A582D445EF55&tt_from=weixin&utm_source=weixin&utm_medium=toutiao_ios&utm_campaign=client_share&wxshare_count=1&source=m_redirect&wid=1667270560382)
+ 1. 局部刷新
+ 2. 复杂的UI利用分帧刷新处理，首先用一个Container占位，等下一帧开始渲染时候再进行刷新
+ 3. 负责图像加入RepaintBoundary，引擎认为足够复杂则会缓存下来
+ 4. 列表页包含的数据直接url带入详情页，降低服务端压力
+ 5. 内存泄露 利用devtool查看页面实例对象，和native交互的时候不使用feature，使用
+ ```
+ void callNative () {
+Future future = FlutterBridge. callNative ("method");
+    _streamSubscription?.cancel();
+    _streamSubscription = future?.asStream()?.listen((value)
+{
+        do something;
+});
+}
+
+void onPageDestroy() {
+    _ streamSubscription?.cancel();
+}
+ ```
+ 6. 页面数据的预加载，提高用户体验 
+ 
+**一些观察者模式中的订阅者在页面退出时没有取消订阅**
+
+### 7. flutter [做了一个动画库 包含了30多个动画](https://github.com/ifgyong/flutter_easyHub),还有[QQ气泡动画](https://github.com/ifgyong/flutter_qq_bubble)
+### 8. py做的自动化数据校验功能，生成各种尺寸Icon脚本
