@@ -30,11 +30,41 @@
 
 ## 2. 四次挥手
 
+[四次挥手文章](https://blog.csdn.net/xyxyxyxyxyxyx/article/details/126183958?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EYuanLiJiHua%7EPosition-1-126183958-blog-81612379.pc_relevant_3mothn_strategy_and_data_recovery&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EYuanLiJiHua%7EPosition-1-126183958-blog-81612379.pc_relevant_3mothn_strategy_and_data_recovery&utm_relevant_index=1)
+
 1. 第一次挥手:客户端发送一个`FIN`报文，报文中会指定一个序列号。此时客户端处于`CLOSED_WAIT1`状态。
+
+```
+FIN=1,seq=x
+```
 2. 第二次握手:服务端收到`FIN`之后，会发送`ACK`报 文，且把客户端的序列号值`+1`作为`ACK`报文的序列号值， 表明已经收到客户端的报文了，此时服务端处于 `CLOSE_WAIT2`状态。
+
+```
+ACK=1,ack=x+1
+```
 3. 第三次挥手:如果服务端也想断开连接了，和客户端的第一次挥手一样，发给`FIN`报文，且指定一个序列 号。此时服务端处于`LAST_ACK`的状态。
+
+```
+FIN=1,seq=y,ack=x+1
+```
 4. 第四次挥手:客户端收到FIN之后，一样发送一个`ACK`报文作为应答，且把服务端的序列号值`+1`作为自己`ACK`报文的序列号值，此时客户端处于`TIME_WAIT`状 态。需要过一阵子以确保服务端收到自己的`ACK`报文之后 才会进入`CLOSED`状态。
+
+```
+ACK=1,ack=y+1,seq=x+1
+```
 5. 服务端收到`ACK`报文之后，就处于关闭连接了，处于`CLOSED`状态。
+
+![image](https://user-images.githubusercontent.com/16182908/199430419-f7747cb1-8a63-4811-9dbd-67852ca0d887.png)
+
+
+
+#### 四次挥手变成三次可以吗？
+
+```
+被动端开方在发送 第二次挥手（ACK）后，通常仍有数据需要处理并发送，因此 第二次挥手（ACK）与 第三次挥手（FIN）不能合并。
+
+双工的，都需要单独FIN=1，进行结束监听。
+```
 
 ## 3. HTTP与HTTPS
 **HTTPS=HTTP+TLS/SSL**
