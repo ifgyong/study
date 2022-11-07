@@ -102,7 +102,20 @@ TCP是双工的，都需要单独FIN=1，进行结束监听。
 #### 请求合并
  当统一个请求多次同时被请求，后来的则不发出请求，等待第一个请求的结果回调即可。
  
- 
+#### 缓存策略
+`NSURLCache`只支持get请求，post无法保存
+![image](https://user-images.githubusercontent.com/16182908/200216972-cdca10c5-f4dc-42ec-8e69-74eb76d53105.png)
+
+所以自定义缓存，采用`YYCache`高性能缓存
+
+通过设置超时时间来更新时间，和默认读取缓存策略。
+```
+typedef NS_ENUM(NSInteger, HLReqCachePolicy) {
+    HLReqReloadIgnoringCacheData = 1 << 0,              //默认忽略缓存，重新请求(不写不取)
+    HLReqReturnCacheElseLoad = 1 << 1,                  //读取缓存(未过期)，缓存为空请求(会写缓存)
+    HLReqReturnCacheElseLoadWithoutWriteCache = 1 << 2, //读取缓存(未过期)，缓存为空请求(不写缓存)
+};
+```
 
 ## 3. HTTP与HTTPS
 **HTTPS=HTTP+TLS/SSL**
