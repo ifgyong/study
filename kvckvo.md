@@ -51,12 +51,13 @@
 ### 1.`[obj addObserver:forKeyPath:options:context:]`中的`context`有什么用？
 <details>
   <summary>点击查看详细内容</summary>
+	
 利用`context`来区分不同的对象相同的`keypath`的值,平时传`NULL`，多个对象被观察，使用指针来区分即可。
 
 ```
-	static NSString *KPersonKey=@"KPersonKey";
-	static void* personKey = &KPersonKey;
-    [self.person addObserver:self forKeyPath:@"nickName" options:(NSKeyValueObservingOptionNew) context:&personKey];
+static NSString *KPersonKey=@"KPersonKey";
+static void* personKey = &KPersonKey;
+[self.person addObserver:self forKeyPath:@"nickName" options:(NSKeyValueObservingOptionNew) context:&personKey];
 ```
 
 </details>
