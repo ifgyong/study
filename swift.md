@@ -1,4 +1,8 @@
 # swift 
+[2021swift 和oc的不同](https://blog.csdn.net/iOSvv/article/details/122235204)
+
+[swift 中结构体和class的区别](https://www.jianshu.com/p/8015b163baf6)
+
 ## 1. class和struct区别
 > `class`是引用类型，`struct`是值类型，
 > `class`可以继承，`struct`不可继承，可实现协议。
