@@ -9,6 +9,7 @@
 ### [4、变量内存布局](./neicunbuju.md)
 ### [5、二进制重排插桩](erjinzhichazhuang.md)/[启动优化](./qidongyouhua.md)/[性能优化](./xingneng.md)/[静态库与动态库](./jingtaiku.md)/[启动加载流程](./start_ti.md)/[离屏渲染](./lipingxuanran.md)
 
+### [swift](./swift.md)
 ### [6、设计模式](./shejimoshi.md)
 
 
