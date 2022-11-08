@@ -161,12 +161,12 @@ print(sum)// 90
 链式调用
 
 ```objc
-		let prices = [3,4,2,1]
-		let count = prices.map({ $0+1})
-		.flatMap({ $0+1})
-		.reduce(0) { $0+$1}
-		
-		print(count)// 18
+let prices = [3,4,2,1]
+let count = prices.map({ $0+1})
+.flatMap({ $0+1})
+.reduce(0) { $0+$1}
+
+print(count)// 18
 ```
 
 
