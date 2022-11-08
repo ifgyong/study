@@ -3,6 +3,8 @@
 
 [swift 中结构体和class的区别](https://www.jianshu.com/p/8015b163baf6)
 
+[Swift函数派发](https://segmentfault.com/a/1190000008063625/)
+
 
 访问权限
 
