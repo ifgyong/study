@@ -27,7 +27,7 @@
 减少了` page fault `次数，提高启动时间。[具体获取顺序步骤](https://www.jianshu.com/p/559f724933ff)
 
 1. 动态库首先加载，一般为系统动态库几百个
-2. `rebase ` app 启动需要对每个section进行 ASLR 进行地址布局随机化，增加一个offset，之前的指针需要进行+offset偏移处理。
+2. `rebase `  `app` 启动需要对每个`section`进行 `ASLR` 进行地址布局随机化，增加一个`offset`，之前的指针需要进行`+offset`偏移处理。
 3. `rebing` non lasy 的数据需要重新绑定到系统的共享内存的实际地址上
 4. `C/C++ __attribute__(constructor) functions ` 执行，可以在这个函数中增加
 
