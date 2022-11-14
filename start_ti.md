@@ -6,10 +6,10 @@
 
 ### 2. 启动前方法加载顺序
 >
-1. All initializers in any framework you link to
-2. All +load methods in your image.
-3. All C++ static initializers and C/C++ __attribute__(constructor) functions in your image
-4. All initializers in frameworks that link to you
+1. `All initializers in any framework you link to`
+2. `All +load methods in your image.`
+3. `All C++ static initializers and C/C++ __attribute__(constructor) functions in your image`
+4. `All initializers in frameworks that link to you`
 
 翻译：
 
@@ -79,7 +79,7 @@ void initAnnotationsFunc() {
     _dyld_register_func_for_add_image(dyld_add_image_callback);
 }
 ```
-增加`_dyld_register_func_for_add_image` 根据sectionname 判断是否需要读取数据，存入的数据是string的指针，实际的数据存储在 `__TEXT cstring`中，读取到单利变量中。以供后续
+增加`_dyld_register_func_for_add_image` 根据`sectionname` 判断是否需要读取数据，存入的数据是`string`的指针，实际的数据存储在 `__TEXT cstring`中，读取到单利变量中。以供后续
 处理，在编译的时候使用`__attribute((used, section("__DATA,"#sectionName""))) = "task:task1"`进行写入到 `section __DATA ` `name`是 `sectionName`。
 
 ###### 优点： 业务线解耦
