@@ -27,8 +27,8 @@
 减少了` page fault `次数，提高启动时间。[具体获取顺序步骤](https://www.jianshu.com/p/559f724933ff)
 
 1. 动态库首先加载，一般为系统动态库几百个
-2. `rebase `  `app` 启动需要对每个`section`进行 `ASLR` 进行地址布局随机化，增加一个`offset`，之前的指针需要进行`+offset`偏移处理。
-3. `rebing` non lasy 的数据需要重新绑定到系统的共享内存的实际地址上
+2. `rebase `  `app` 启动需要对每个`section`进行 `ASLR` 进行地址布局随机化，增加一个`offset`，之前的指针需要进行`+offset`偏移处理。自己代码偏移量是一样的，其他系统动态库，每个动态库偏移量不一样。Xcode 断点模式下，可以使用 `image list -o `查看所有偏移量。
+3. `rebinding` `non lazy` 的数据需要重新绑定到系统的共享内存的实际地址上
 4. `C/C++ __attribute__(constructor) functions ` 执行，可以在这个函数中增加
 
 ```
@@ -83,7 +83,5 @@ void initAnnotationsFunc() {
 处理，在编译的时候使用`__attribute((used, section("__DATA,"#sectionName""))) = "task:task1"`进行写入到 `section __DATA ` `name`是 `sectionName`。
 
 ###### 优点： 业务线解耦
-
 在`will launch `中调用服务 `task` 的初始化和执行协议函数。不重要的`task`再`root vc didappear`之后进行执行。
 
-5. 
