@@ -17,3 +17,73 @@
 2. 自己写的`+load`
 3. 自己写的`c++`函数
 
+
+
+##  启动加载时机和需要处理的事情
+
+`app `启动 内核创建虚拟页，虚拟页通过`mmap()`映射到 物理内存，因为`app` 函数和代码很多没必要一次性读取出来，
+则产生了分页的概念。**在Mac OS系统上每页为4KB，在iOS系统上每页为16KB**,则启动的时候需要调用很多函数，每当函数未读取
+到虚拟页上，系统内核接管进程，主线程`block`掉，当`block`掉多次则耗时较长，需要将每次读取的数据都是启动需要的，则编译的时候排列顺序设置成需要的`map`
+减少了` page fault `次数，提高启动时间。[具体获取顺序步骤](https://www.jianshu.com/p/559f724933ff)
+
+1. 动态库首先加载，一般为系统动态库几百个
+2. `rebase ` app 启动需要对每个section进行 ASLR 进行地址布局随机化，增加一个offset，之前的指针需要进行+offset偏移处理。
+3. `rebing` non lasy 的数据需要重新绑定到系统的共享内存的实际地址上
+4. `C/C++ __attribute__(constructor) functions ` 执行，可以在这个函数中增加
+
+```
+NSArray<NSString *>* CSReadConfiguration(char *sectionName,const struct mach_header *mh) {
+    NSMutableArray<NSString*> *annotionDefines = nil;
+    unsigned long size = 0;
+#ifndef __LP64__
+    uintptr_t *memory = (uintptr_t*)getsectiondata(mh, SEG_DATA, sectionName, &size);
+#else
+    const struct mach_header_64 *mhp64 = (const struct mach_header_64 *)mh;
+    uintptr_t *memory = (uintptr_t*)getsectiondata(mhp64, SEG_DATA, sectionName, &size);
+#endif
+    unsigned long counter = size/sizeof(void*);
+    for(int idx = 0; idx < counter; ++idx){
+        char *string = (char*)memory[idx];
+        NSString *str = [NSString stringWithUTF8String:string];
+        if(!str)continue;
+        if (!annotionDefines) annotionDefines = [[NSMutableArray alloc] init];
+        [annotionDefines addObject:str];
+    }
+    return annotionDefines;
+}
+
+static void dyld_add_image_callback(const struct mach_header *mh, intptr_t vmaddr_slide) {
+    [[[CSMonitorCenter sharedInstance] applicationTimeProfiler] beginAnnotationRead];
+    Dl_info image_info;
+    if (dladdr(mh, &image_info)) {
+#if TARGET_OS_SIMULATOR
+        const char *simulator_env_lib_name_prefix = "/Users";
+        if (strncmp(simulator_env_lib_name_prefix, image_info.dli_fname, strlen(simulator_env_lib_name_prefix)) == 0) {
+            NSArray<NSString*> *annotationDefines = CSReadConfiguration(CSAnnotationSectionName, mh);
+            [[CSAnnotation sharedInstance] appendAnnotationDefines:annotationDefines];
+        }
+#else
+        char main_lib_name_prefix[] = "/var";
+        char private_lib_name_prefix[] = "/private";
+        if (strncmp(private_lib_name_prefix, image_info.dli_fname, strlen(private_lib_name_prefix)) == 0 || strncmp(main_lib_name_prefix, image_info.dli_fname, strlen(main_lib_name_prefix)) == 0) {
+            NSArray<NSString*> *annotationDefines = CSReadConfiguration(CSAnnotationSectionName, mh);
+            [[CSAnnotation sharedInstance] appendAnnotationDefines:annotationDefines];
+        }
+#endif
+    }
+    [[[CSMonitorCenter sharedInstance] applicationTimeProfiler] endAnnotationRead];
+}
+
+__attribute__((constructor))
+void initAnnotationsFunc() {
+    _dyld_register_func_for_add_image(dyld_add_image_callback);
+}
+```
+增加`_dyld_register_func_for_add_image` 根据sectionname 判断是否需要读取数据，存入的数据是string的指针，实际的数据存储在 `__TEXT cstring`中，读取到单利变量中。以供后续
+处理，在编译的时候使用`__attribute((used, section("__DATA,"#sectionName""))) = "task:task1"`进行写入到 `section __DATA ` `name`是 `sectionName`。
+
+###### 优点： 业务线解耦
+
+在`will launch `中调用服务 `task` 的初始化和执行协议函数。不重要的`task`再`root vc didappear`之后进行执行。
+
+5. 
