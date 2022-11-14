@@ -27,9 +27,10 @@
 减少了` page fault `次数，提高启动时间。[具体获取顺序步骤](https://www.jianshu.com/p/559f724933ff)
 
 1. 动态库首先加载，一般为系统动态库几百个
-2. `rebase `  `app` 启动需要对每个`section`进行 `ASLR` 进行地址布局随机化，增加一个`offset`，之前的指针需要进行`+offset`偏移处理。自己代码偏移量是一样的，其他系统动态库，每个动态库偏移量不一样。Xcode 断点模式下，可以使用 `image list -o `查看所有偏移量。
-3. `rebinding` `non lazy` 的数据需要重新绑定到系统的共享内存的实际地址上
-4. `C/C++ __attribute__(constructor) functions ` 执行，可以在这个函数中增加
+3. `rebase `  `app` 启动需要对每个`section`进行 `ASLR` 进行地址布局随机化，增加一个`offset`，之前的指针需要进行`+offset`偏移处理。自己代码偏移量是一样的，其他系统动态库，每个动态库偏移量不一样。Xcode 断点模式下，可以使用 `image list -o `查看所有偏移量。
+4. `rebinding` `non lazy` 的数据需要重新绑定到系统的共享内存的实际地址上
+5. 依赖库的`+load`和`c++ _attribute__(constructor) funcs`,然后是自己代码的 `+load`和`c++ _attribute__(constructor) funcs`.
+6. `C/C++ __attribute__(constructor) functions ` 在main之前执行，可以在这个函数中增加以下代码实现读取`macho`读取`section __DATA `数据.
 
 ```
 NSArray<NSString *>* CSReadConfiguration(char *sectionName,const struct mach_header *mh) {
