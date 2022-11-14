@@ -6,7 +6,7 @@
 ### [2、GCD与读写锁](./GCD.md)
 ### [3、锁与多线程](./lock.md)/[Block](./block.md)/[线程通讯](./xiancheng.md)/
 
-### [4、变量内存布局](./neicunbuju.md)
+### [4、变量内存布局](./neicunbuju.md)/[ASLR 地址随机布局](https://www.jianshu.com/p/94f67bb84c93?utm_campaign=hugo&utm_medium=reader_share&utm_content=note&utm_source=weixin-friends)
 ### [5、二进制重排插桩](erjinzhichazhuang.md)/[启动优化](./qidongyouhua.md)/[性能优化](./xingneng.md)/[静态库与动态库](./jingtaiku.md)/[启动加载流程](./start_ti.md)/[离屏渲染](./lipingxuanran.md)/[macho-view 下载](https://github.com/ifgyong/MachOView-no-crash)
 
 ### [swift](./swift.md)
