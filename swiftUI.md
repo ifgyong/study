@@ -4,12 +4,12 @@
 层叠布局或者叫做绝对布局
 | 对齐方式 | 示例|
 | --- | --- |
-|`top`|![image](https://github.com/user-attachments/assets/8c066178-3d95-4078-8dc6-d25b472bea69)|
-|topLeading|![image](https://github.com/user-attachments/assets/49be1e5b-5bf3-4fb0-9527-32bd1f967570)|
-|topTrailing|![image](https://github.com/user-attachments/assets/9f3755aa-5d58-49d7-af7c-a0e5fa7dd278)|
-|bottom|![image](https://github.com/user-attachments/assets/f3f07f32-5c66-476f-be8a-6484abf1eda8)|
-|bottomLeading|![image](https://github.com/user-attachments/assets/a7414481-ff34-447f-9490-df00f54ef39e)|
-|bottomTrailing|![image](https://github.com/user-attachments/assets/15b1fa69-7ead-4ad3-84c2-20109835ffd9)|
+|`top`|![image](https://github.com/user-attachments/assets/f50e5f16-768f-4285-8de2-b9a475c8e06a)|
+|topLeading|![image](https://github.com/user-attachments/assets/20be88a0-9b67-4158-8d8d-c08e947c00cf)|
+|topTrailing|![image](https://github.com/user-attachments/assets/987871d0-1800-494e-bcb9-45a809fa0bb7)|
+|bottom|![image](https://github.com/user-attachments/assets/9a66f86a-aea1-45f5-b69c-e5b86d2ef4d3)|
+|bottomLeading|![image](https://github.com/user-attachments/assets/2c13a4e3-2e22-40d9-941c-ce688c53265b)|
+|bottomTrailing|![image](https://github.com/user-attachments/assets/05f71c8b-3799-4523-99e4-bd4f0746230b)|
 
 ```
 struct ContentView: View {
@@ -47,17 +47,18 @@ struct ContentView: View {
 
 
 水平布局，元素按照水平方式顺序排列
-![image](https://github.com/user-attachments/assets/57ce119f-d948-4922-9e32-568018593cb8)
+![image](https://github.com/user-attachments/assets/34e2bca5-2a6e-4aa4-941c-cf5ea935d06c)
+
 
 
 ```
-    ZStack(content: {
+    HStack{
+            ZStack(content: {
                 // 设置背景色
                 Rectangle().fill(Color.red.opacity(0.2))
                     .frame(height: 80) // 根据需要调整高度
                 Text("左边")
             })
-            
             ZStack(content: {
                 // 设置背景色
                 Rectangle().fill(Color.gray.opacity(0.2))
@@ -69,11 +70,13 @@ struct ContentView: View {
                     .frame(height: 80) // 根据需要调整高度
                 Text("右边")
             })
+        }
 ```
 
 #### VStack
 垂直布局，元素按照垂直方式顺序排列
 
+![image](https://github.com/user-attachments/assets/f003d35d-04b3-4e04-91bc-236d156aea84)
 
 ```
   var body: some View {
