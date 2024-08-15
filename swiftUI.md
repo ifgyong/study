@@ -105,7 +105,34 @@ struct ContentView: View {
 |滚动方向|示例|
 |---|---|
 |horizontal|![2024-08-15 20-17-16 2024-08-15 20_17_26](https://github.com/user-attachments/assets/4a3bc85d-8f2d-490c-923d-16e1f681eb6a)|
-|vertical||
+|vertical|![3967DE98-8973-4FFF-8694-5A2E6BC32EB0-89637-00004EEE5B4718D5](https://github.com/user-attachments/assets/271da686-c7ea-4778-b450-e62687267ab3)|
 
+```
+  // 水平滚动视图
+        ScrollView(.horizontal) {
+            HStack {
+                ForEach(0..<5) { index in
+                    ZStack{
+                        Rectangle().fill(colors[index])
+                            .frame(width: 200, height: 80)
+                        Text("Item \(index)")
+                            .padding()
+                    }
+                }
+            }
+     // 垂直滚动视图
+        ScrollView(.vertical) {
+            VStack {
+                ForEach(0..<5) { index in
+                    ZStack{
+                        Rectangle().fill(colors[index])
+                            .frame(width: 200, height: 80)
+                        Text("Item \(index)")
+                            .padding()
+                    }
+                }
+            }
+        }
+```
 
 
